@@ -1,5 +1,4 @@
-src/bin/*
-src/obj/*
-src/Service/bin/*
-src/Service/obj/*
 .vs
+src/packages/*
+bin/
+obj/
