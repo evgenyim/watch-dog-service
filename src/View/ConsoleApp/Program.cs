@@ -8,10 +8,8 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Commands:");
-            Console.WriteLine("check <port> : checks that on adress http://localhost:<port>/ exists working service");
-            Console.WriteLine("quit : close app");
             ConsoleApp app = new ConsoleApp();
+            app.HandleCommand("help");
             while (true)
             {
                 string command = Console.ReadLine();

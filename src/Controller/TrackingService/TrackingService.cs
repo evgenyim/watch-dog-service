@@ -6,43 +6,37 @@ using System.Net.Http.Headers;
 
 using System.Text;
 using System.Threading;
+using Model;
 
 namespace Controller
 {
 	public class TrackingService
 	{
+		ServiceStorage storage = new ServiceStorage();
 		public TrackingService()
 		{
 
 		}
 
-		public bool CheckServices(string port)
+		public List<bool> CheckServices()
         {
-			HttpClient _client = createClient(port);
-			try
-			{
-				HttpResponseMessage response = _client.GetAsync("api/products/isalive").Result;
-				return response.IsSuccessStatusCode;
-			}
-			catch (Exception e)
+			List<bool> ret = new List<bool>();
+			foreach(Service s in storage.storage)
             {
-				return false;
+				bool res = s.IsAlive();
+				ret.Add(res); 
             }
-
+			return ret;
 		}
 
-		private static HttpClient createClient(string port)
-		{
-			HttpClient client = new HttpClient();
+		public void AddWebservice(string port)
+        {
+			storage.AddWebService("http://localhost:" + port + "/");
+        }
 
-			string baseUrl = "http://localhost:" + port + "/";
-
-			client.BaseAddress = new Uri(baseUrl);
-			client.DefaultRequestHeaders.Accept.Clear();
-			client.DefaultRequestHeaders.Accept.Add(
-				new MediaTypeWithQualityHeaderValue("application/json"));
-
-			return client;
-		}
+		public void AddService(Service s)
+        {
+			storage.storage.Add(s);
+        }
 	}
 }

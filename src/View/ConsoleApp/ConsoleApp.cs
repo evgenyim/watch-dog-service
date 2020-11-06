@@ -1,5 +1,6 @@
 ﻿using Controller;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -24,16 +25,18 @@ namespace ConsoleApp
             string[] commands = command.Split();
             if (commands[0] == "check")
             {
-                if (t.CheckServices(commands[1]))
+                List<bool> ret = t.CheckServices();
+                foreach(bool res in ret)
                 {
-                    Console.WriteLine("Service is alive");
-                }
-                else
-                {
-                    Console.WriteLine("Service is dead");
+                    Console.WriteLine(res);
                 }
                 return true;
             } 
+            else if (commands[0] == "add")
+            {
+                t.AddWebservice(commands[1]);
+                return true;
+            }
             else if (commands[0] == "quit")
             {
                 return false;
@@ -41,8 +44,10 @@ namespace ConsoleApp
             else if (commands[0] == "help")
             {
                 Console.WriteLine("Commands:");
-                Console.WriteLine("check <port> : checks that on adress http://localhost:<port>/ exists working service");
+                Console.WriteLine("add <port> : adds new service with adress http://localhost:<port>/");
+                Console.WriteLine("check : checks all services");
                 Console.WriteLine("quit : close app");
+                return true;
             }
             Console.WriteLine("Wrong input, type help");
             return true;

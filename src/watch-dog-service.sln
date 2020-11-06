@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Controller", "Controller", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackingService", "Controller\TrackingService\TrackingService.csproj", "{71D3AE7A-4A53-4818-B425-720D25666A04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "View\ConsoleApp\ConsoleApp.csproj", "{5DAEE114-1324-4820-A547-9C6CCA2D9EE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "View\ConsoleApp\ConsoleApp.csproj", "{5DAEE114-1324-4820-A547-9C6CCA2D9EE6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{71D3AE7A-4A53-4818-B425-720D25666A04} = {71D3AE7A-4A53-4818-B425-720D25666A04}
 	EndProjectSection
@@ -28,6 +28,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\.gitignore = ..\.gitignore
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AF397F17-118A-4E37-B4C6-023337D9AD4A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrackingserviceTests", "Tests\TrackingserviceTests\TrackingserviceTests.csproj", "{D8B24015-C973-481D-BC9D-FA9B1E6A3537}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceFarm", "ServiceFarm\ServiceFarm.csproj", "{B7462A30-D90B-437C-BDBF-1B1E6EB90888}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +83,22 @@ Global
 		{1125BEA6-8655-4A96-827B-92AE52C4440C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1125BEA6-8655-4A96-827B-92AE52C4440C}.Release|x86.ActiveCfg = Release|x86
 		{1125BEA6-8655-4A96-827B-92AE52C4440C}.Release|x86.Build.0 = Release|x86
+		{D8B24015-C973-481D-BC9D-FA9B1E6A3537}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8B24015-C973-481D-BC9D-FA9B1E6A3537}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8B24015-C973-481D-BC9D-FA9B1E6A3537}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D8B24015-C973-481D-BC9D-FA9B1E6A3537}.Debug|x86.Build.0 = Debug|Any CPU
+		{D8B24015-C973-481D-BC9D-FA9B1E6A3537}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8B24015-C973-481D-BC9D-FA9B1E6A3537}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8B24015-C973-481D-BC9D-FA9B1E6A3537}.Release|x86.ActiveCfg = Release|Any CPU
+		{D8B24015-C973-481D-BC9D-FA9B1E6A3537}.Release|x86.Build.0 = Release|Any CPU
+		{B7462A30-D90B-437C-BDBF-1B1E6EB90888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7462A30-D90B-437C-BDBF-1B1E6EB90888}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7462A30-D90B-437C-BDBF-1B1E6EB90888}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B7462A30-D90B-437C-BDBF-1B1E6EB90888}.Debug|x86.Build.0 = Debug|Any CPU
+		{B7462A30-D90B-437C-BDBF-1B1E6EB90888}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7462A30-D90B-437C-BDBF-1B1E6EB90888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7462A30-D90B-437C-BDBF-1B1E6EB90888}.Release|x86.ActiveCfg = Release|Any CPU
+		{B7462A30-D90B-437C-BDBF-1B1E6EB90888}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,6 +109,8 @@ Global
 		{4F724BF3-0C29-48B9-98A9-049E2E7BF2C9} = {679F0BF9-39FC-43C1-AC6A-5BA222E1414C}
 		{23D8822F-0CB2-49F7-AF03-D98358B32B8F} = {7562A833-84BD-41C5-BEB3-57BE356293D6}
 		{1125BEA6-8655-4A96-827B-92AE52C4440C} = {7562A833-84BD-41C5-BEB3-57BE356293D6}
+		{D8B24015-C973-481D-BC9D-FA9B1E6A3537} = {AF397F17-118A-4E37-B4C6-023337D9AD4A}
+		{B7462A30-D90B-437C-BDBF-1B1E6EB90888} = {7562A833-84BD-41C5-BEB3-57BE356293D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {49DDF785-993F-40E5-8816-FD8DC20BDF8E}

@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Service
+namespace Model
 {
-    class ServiceStorage
+    public class ServiceStorage
     {
-        List<Service> storage = new List<Service>();
+        public List<Service> storage = new List<Service>();
         public ServiceStorage()
         {
 
         }
 
-        public void AddService()
+        public void AddWebService(string url)
         {
-            
+            WebService s = new WebService(url);
+            this.storage.Add(s);
         }
 
         public void DeleteService()

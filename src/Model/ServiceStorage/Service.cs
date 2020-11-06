@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Service
+namespace Model
 {
-    class Service
+    public abstract class Service
     {
-        public bool IsAlive()
-        {
-            return true;
-        }
+        public string url;
+        abstract public bool IsAlive();
     }
 }
