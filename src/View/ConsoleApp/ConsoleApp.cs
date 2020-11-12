@@ -5,16 +5,14 @@ using System.Data;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Model;
 
 namespace ConsoleApp
 {
     class ConsoleApp
     {
-        TrackingService t = new TrackingService();
+        private TrackingService t = new TrackingService();
 
-        public ConsoleApp()
-        {
-        }
         public void ShowServices(int x)
         {
             Console.WriteLine(x);
@@ -25,10 +23,10 @@ namespace ConsoleApp
             string[] commands = command.Split();
             if (commands[0] == "check")
             {
-                List<bool> ret = t.CheckServices();
-                foreach(bool res in ret)
+                List<Status> ret = t.CheckServices();
+                foreach(Status res in ret)
                 {
-                    Console.WriteLine(res);
+                    Console.WriteLine(res.toString());
                 }
                 return true;
             } 

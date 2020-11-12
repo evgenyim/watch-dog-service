@@ -15,8 +15,6 @@ namespace ConsoleHosting
             Console.WriteLine("Enter ports amount:");
             int ports = Int32.Parse(Console.ReadLine());
 
-            CancellationTokenSource cts = new CancellationTokenSource();
-
             for (int i = 0; i < ports; i++)
             {
                 string baseAddress = "http://localhost:123" + i.ToString() + "/";

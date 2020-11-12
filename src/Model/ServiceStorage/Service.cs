@@ -4,9 +4,10 @@ using System.Text;
 
 namespace Model
 {
-    public abstract class Service
+    abstract public class Service
     {
         public string url;
-        abstract public bool IsAlive();
+        public int timeCheck;
+        abstract public Status IsAlive();
     }
 }

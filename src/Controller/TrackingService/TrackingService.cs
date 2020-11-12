@@ -10,20 +10,16 @@ using Model;
 
 namespace Controller
 {
-	public class TrackingService
+	public class TrackingService: ITrackingService
 	{
-		ServiceStorage storage = new ServiceStorage();
-		public TrackingService()
-		{
+		private ServiceStorage storage = new ServiceStorage();
 
-		}
-
-		public List<bool> CheckServices()
+		public List<Status> CheckServices()
         {
-			List<bool> ret = new List<bool>();
+			List<Status> ret = new List<Status>();
 			foreach(Service s in storage.storage)
             {
-				bool res = s.IsAlive();
+				Status res = s.IsAlive();
 				ret.Add(res); 
             }
 			return ret;

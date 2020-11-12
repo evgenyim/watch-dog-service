@@ -5,30 +5,50 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
-
+using System.Runtime.Remoting.Messaging;
 
 namespace Model
 {
     class WebService : Service
     {
-        string url;
 
-        public WebService(string url)
+        private readonly string url;
+        private readonly string checkUrl;
+        private readonly int timeCheck;
+        private DateTime lastChecked;
+        private HttpClient _client;
+        private bool lastStatus;
+
+        public WebService(string url, string checkUrl = "api/products/isalive", int timeCheck = 10)
         {
             this.url = url;
+            this.checkUrl = checkUrl;
+            this.timeCheck = timeCheck;
+            lastChecked = DateTime.MinValue;
+            lastStatus = false;
+            _client = createClient();
         }
 
-        public override bool IsAlive()
+        public override Status IsAlive()
         {
-            HttpClient _client = createClient();
+            DateTime now = DateTime.Now;
+
+            TimeSpan diff = now - lastChecked;
+            if (diff.TotalSeconds < timeCheck && lastChecked != null)
+                return new WebStatus(lastStatus, url);
             try
             {
-                HttpResponseMessage response = _client.GetAsync("api/products/isalive").Result;
-                return response.IsSuccessStatusCode;
+                HttpResponseMessage response = _client.GetAsync(this.checkUrl).Result;
+                lastStatus = response.IsSuccessStatusCode;
+                lastChecked = DateTime.Now;
+                return new WebStatus(lastStatus, url);
             }
             catch (Exception e)
             {
-                return false;
+               Console.WriteLine($"Error occured in WebService.IsAlive(): {e.Message}");
+                lastStatus = false;
+                lastChecked = DateTime.Now;
+                return new WebStatus(false, url);
             }
         }
 

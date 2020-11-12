@@ -4,13 +4,9 @@ using System.Text;
 
 namespace Model
 {
-    public class ServiceStorage
+    public class ServiceStorage: IServiceStorage
     {
         public List<Service> storage = new List<Service>();
-        public ServiceStorage()
-        {
-
-        }
 
         public void AddWebService(string url)
         {
