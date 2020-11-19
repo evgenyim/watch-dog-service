@@ -9,5 +9,7 @@ namespace Model
     abstract public class Status
     {
         abstract public string toString();
+        abstract public string getUrl();
+        abstract public bool getStatus();
     }
 }

@@ -1,0 +1,29 @@
+﻿<Window x:Class="GUI.AddForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GUI"
+        mc:Ignorable="d"
+        Title="AddForm" Height="270" Width="600">
+    <Grid>
+        <ComboBox Name="serviceList" Height="30" VerticalAlignment="Top">
+            <TextBlock>WebService</TextBlock>
+            <TextBlock>AnotherService</TextBlock>
+        </ComboBox>
+        <TextBlock x:Name="textBlockUrl" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="23,51,430.6,155.8">
+            <Run FontSize="12" Foreground="Black" FontWeight="Bold">Enter service url</Run>
+        </TextBlock>
+        <TextBox x:Name="textBoxUrl" Width="140" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="23,84,0,0" ></TextBox>
+        <TextBlock x:Name="textBlockAdress" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="208,51,205.6,147.8">
+            <Run FontSize="12" Foreground="Black" FontWeight="Bold">Enter additional adress to check</Run>
+        </TextBlock>
+        <TextBox x:Name="textBoxAdress" Width="180" Height="30" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="193,84,191,0" />
+        <TextBlock x:Name="textBlockCheckTime" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="429,51,18.6,155.8" RenderTransformOrigin="3.028,3.267">
+            <Run FontSize="12" Foreground="Black" FontWeight="Bold">Enter check timeout</Run>
+        </TextBlock>
+        <TextBox x:Name="textBoxCheckTime" Width="146" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,84,19,0" PreviewTextInput="NumberValidationTextBox" />
+        <Button x:Name="addButton" Content="Add Service" Click="Button_Click" Margin="134,163,134.4,29" />
+
+    </Grid>
+</Window>

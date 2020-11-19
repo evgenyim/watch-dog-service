@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.Remoting.Messaging;
+using Model.Other;
 
 namespace Model
 {
@@ -45,7 +46,7 @@ namespace Model
             }
             catch (Exception e)
             {
-               Console.WriteLine($"Error occured in WebService.IsAlive(): {e.Message}");
+                Logger.Error($"Error occured in WebService.IsAlive()", e);
                 lastStatus = false;
                 lastChecked = DateTime.Now;
                 return new WebStatus(false, url);

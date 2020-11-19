@@ -23,5 +23,15 @@ namespace Model
                 return url + " is working";
             return url + " is not working";
         }
+
+        public override string getUrl()
+        {
+            return url;
+        }
+
+        public override bool getStatus()
+        {
+            return status;
+        }
     }
 }

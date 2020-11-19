@@ -14,6 +14,16 @@ namespace Model
             this.storage.Add(s);
         }
 
+        public void AddWebService(string url, string checkUrl="api/products/isalive", int timeCheck=10)
+        {
+            if (checkUrl == "")
+            {
+                checkUrl = "api/products/isalive";
+            }
+            WebService s = new WebService(url, checkUrl, timeCheck);
+            this.storage.Add(s);
+        }
+
         public void DeleteService()
         {
 

@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IServiceStorage.cs" />
+    <Compile Include="Other\Logger.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="WebService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -25,10 +25,15 @@ namespace Controller
 			return ret;
 		}
 
-		public void AddWebservice(string port)
+		public void AddWebservice(string url, string checkUrl="api/products/isalive", int timeCheck=10)
         {
-			storage.AddWebService("http://localhost:" + port + "/");
-        }
+			int i;
+			bool bNum = int.TryParse(url, out i);
+			if (bNum)
+				storage.AddWebService("http://localhost:" + url + "/", checkUrl, timeCheck);
+			else
+				storage.AddWebService(url, checkUrl, timeCheck);
+		}
 
 		public void AddService(Service s)
         {
