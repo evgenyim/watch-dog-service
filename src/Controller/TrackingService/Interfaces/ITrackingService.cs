@@ -9,6 +9,6 @@ namespace Controller
 {
     public interface ITrackingService
     {
-        List<Status> CheckServices();
+        List<Tuple<int, Status>> CheckServices();
     }
 }

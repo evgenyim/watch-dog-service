@@ -22,7 +22,7 @@ namespace GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        Dictionary<string, bool> dict = new Dictionary<string, bool>();
+        Dictionary<int, bool> dict = new Dictionary<int, bool>();
 
         TrackingService t = new TrackingService();
         public MainWindow()
@@ -39,16 +39,16 @@ namespace GUI
 
         private void Button_Click_Check(object sender, RoutedEventArgs e)
         {
-            List<Status> l = t.CheckServices();
-            foreach(Status s in l)
+            List<Tuple<int, Status>> l = t.CheckServices();
+            foreach(var s in l)
             {
-                dict[s.getUrl()] = s.getStatus();
+                dict[s.Item1] = s.Item2.getStatus();
             }
             foreach (ServiceGrid g in panel.Children)
             {
-                if (dict.ContainsKey(g.name))
+                if (dict.ContainsKey(g.id))
                 {
-                    g.setStatus(dict[g.name]);
+                    g.setStatus(dict[g.id]);
                 }
             }
             MessageBox.Show("Services checked!");
@@ -57,20 +57,27 @@ namespace GUI
 
         public void AddService(string url, string adress, int checkTime)
         {
-            t.AddWebservice(url, adress, checkTime);
-            ServiceGrid s = new ServiceGrid(url, false);
+            int id = t.AddWebservice(url, adress, checkTime);
+            ServiceGrid s = new ServiceGrid(id, url, false);
             panel.Children.Add(s);
+        }
+
+        public void DeleteService(int id)
+        {
+            dict.Remove(id);
+            t.DeleteService(id);
         }
     }
 
     public class ServiceGrid : Grid
     {
-        Rectangle r;
-        TextBlock name_;
-        bool isAlive;
-        Button btn;
+        private Rectangle r;
+        private TextBlock name_;
+        private bool isAlive;
+        private Button btn;
         public string name;
-        public ServiceGrid(string url, bool isAlive)
+        public int id;
+        public ServiceGrid(int id, string url, bool isAlive)
         {
             r = new Rectangle
             {
@@ -94,6 +101,7 @@ namespace GUI
             Children.Add(r);
             Children.Add(name_);
             Children.Add(btn);
+            this.id = id;
         }
 
         public void setStatus(bool status)
@@ -114,6 +122,9 @@ namespace GUI
             var parent = VisualTreeHelper.GetParent(this);
             var parentAsPanel = parent as Panel;
             parentAsPanel.Children.Remove(this);
+            MainWindow parentWindow = (MainWindow) Window.GetWindow(parent);
+            parentWindow.DeleteService(id);
+
         }
     }
 }

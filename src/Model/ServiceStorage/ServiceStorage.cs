@@ -6,32 +6,41 @@ namespace Model
 {
     public class ServiceStorage: IServiceStorage
     {
-        public List<Service> storage = new List<Service>();
+        public Dictionary<int, Service> storage = new Dictionary<int, Service>();
+        private int lastId = 0;
 
-        public void AddWebService(string url)
+        public int AddService(Service s)
         {
-            WebService s = new WebService(url);
-            this.storage.Add(s);
+            storage[lastId++] = s;
+            return lastId - 1;
         }
 
-        public void AddWebService(string url, string checkUrl="api/products/isalive", int timeCheck=10)
+        public int AddWebService(string url)
+        {
+            WebService s = new WebService(url);
+            storage[lastId++] = s;
+            return lastId - 1;
+        }
+
+        public int AddWebService(string url, string checkUrl="api/products/isalive", int timeCheck=10)
         {
             if (checkUrl == "")
             {
                 checkUrl = "api/products/isalive";
             }
             WebService s = new WebService(url, checkUrl, timeCheck);
-            this.storage.Add(s);
+            storage[lastId++] = s;
+            return lastId - 1;
         }
 
-        public void DeleteService()
+        public void DeleteService(int id)
         {
-
+            storage.Remove(id);
         }
 
         public void LoadServices()
         {
-
+            
         }
 
     }

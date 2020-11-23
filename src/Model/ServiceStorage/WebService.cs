@@ -57,13 +57,20 @@ namespace Model
         {
             HttpClient client = new HttpClient();
 
-            string baseUrl = this.url;
+            string baseUrl = url;
 
-            client.BaseAddress = new Uri(baseUrl);
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
+            try
+            {
 
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Error occured in WebService.IsAlive()", e);
+            }
             return client;
         }
 

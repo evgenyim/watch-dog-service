@@ -8,6 +8,7 @@ namespace Model
 {
     public interface IServiceStorage
     {
-        void AddWebService(string url);
+        int AddService(Service s);
+        int AddWebService(string url);
     }
 }

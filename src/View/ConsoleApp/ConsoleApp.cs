@@ -23,10 +23,10 @@ namespace ConsoleApp
             string[] commands = command.Split();
             if (commands[0] == "check")
             {
-                List<Status> ret = t.CheckServices();
-                foreach(Status res in ret)
+                List<Tuple<int, Status>> ret = t.CheckServices();
+                foreach(var res in ret)
                 {
-                    Console.WriteLine(res.toString());
+                    Console.WriteLine(res.Item2.toString());
                 }
                 return true;
             } 
