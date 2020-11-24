@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
+        Closing="Window_Closing"
         Title="MainWindow" Height="500" Width="650">
     <Grid Margin="0,0,-0.4,0">
         <Button x:Name="button1"  Width="100" Height="30" Content="Add Service" Click="Button_Click" Margin="498,10,10.4,380" />

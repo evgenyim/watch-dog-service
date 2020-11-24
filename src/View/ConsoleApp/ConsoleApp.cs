@@ -32,7 +32,7 @@ namespace ConsoleApp
             } 
             else if (commands[0] == "add")
             {
-                t.AddWebservice(commands[1]);
+                t.AddService("WebService", commands[1]);
                 return true;
             }
             else if (commands[0] == "quit")

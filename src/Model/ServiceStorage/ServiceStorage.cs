@@ -22,13 +22,13 @@ namespace Model
             return lastId - 1;
         }
 
-        public int AddWebService(string url, string checkUrl="api/products/isalive", int timeCheck=10)
+        public int AddWebService(string url, string checkUrl="api/products/isalive")
         {
             if (checkUrl == "")
             {
                 checkUrl = "api/products/isalive";
             }
-            WebService s = new WebService(url, checkUrl, timeCheck);
+            WebService s = new WebService(url, checkUrl);
             storage[lastId++] = s;
             return lastId - 1;
         }

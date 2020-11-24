@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,8 +11,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 using Controller;
 using Model;
+using Model.Other;
+using System.Windows.Threading;
+using System.Threading.Tasks;
 
 namespace GUI
 {
@@ -22,12 +25,35 @@ namespace GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        Dictionary<int, bool> dict = new Dictionary<int, bool>();
+        private Dictionary<int, bool> dict = new Dictionary<int, bool>();
 
-        TrackingService t = new TrackingService();
+        private TrackingService t = new TrackingService();
+        private Thread thread;
         public MainWindow()
         {
             InitializeComponent();
+            thread = new Thread(Run);
+            thread.Start();
+        }
+
+        private void Run()
+        {
+            while (true)
+            {
+                Thread.Sleep(1000);
+                dict = t.statuses;
+                Dispatcher.Invoke(() =>
+                {
+                    foreach (ServiceGrid g in panel.Children)
+                    {
+                        if (dict.ContainsKey(g.id))
+                        {
+                            g.setStatus(dict[g.id]);
+                        }
+                    }
+                });
+               
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -39,25 +65,33 @@ namespace GUI
 
         private void Button_Click_Check(object sender, RoutedEventArgs e)
         {
-            List<Tuple<int, Status>> l = t.CheckServices();
-            foreach(var s in l)
-            {
-                dict[s.Item1] = s.Item2.getStatus();
-            }
-            foreach (ServiceGrid g in panel.Children)
-            {
-                if (dict.ContainsKey(g.id))
+            Task.Run(() => {
+                List<Tuple<int, Status>> l = t.CheckServices();
+                foreach (var s in l)
                 {
-                    g.setStatus(dict[g.id]);
+                    dict[s.Item1] = s.Item2.getStatus();
                 }
-            }
-            MessageBox.Show("Services checked!");
+                
+                Dispatcher.BeginInvoke(DispatcherPriority.Render,
+                         new Action(() => {
+                             foreach (ServiceGrid g in panel.Children)
+                             {
+                                 if (dict.ContainsKey(g.id))
+                                 {
+                                     g.setStatus(dict[g.id]);
+                                 }
+                             }
+                         }));
+                MessageBox.Show("Services checked!");
+
+            });
+            
         }
 
 
-        public void AddService(string url, string adress, int checkTime)
+        public void AddService(string type, string url, string adress, int checkTime)
         {
-            int id = t.AddWebservice(url, adress, checkTime);
+            int id = t.AddService(type, url, adress, checkTime);
             ServiceGrid s = new ServiceGrid(id, url, false);
             panel.Children.Add(s);
         }
@@ -66,6 +100,11 @@ namespace GUI
         {
             dict.Remove(id);
             t.DeleteService(id);
+        }
+
+        void Window_Closing(object sender, CancelEventArgs e)
+        {
+            thread.Abort();
         }
     }
 

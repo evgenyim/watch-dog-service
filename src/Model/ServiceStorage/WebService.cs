@@ -15,40 +15,27 @@ namespace Model
 
         private readonly string url;
         private readonly string checkUrl;
-        private readonly int timeCheck;
-        private DateTime lastChecked;
         private HttpClient _client;
-        private bool lastStatus;
 
-        public WebService(string url, string checkUrl = "api/products/isalive", int timeCheck = 10)
+        public WebService(string url, string checkUrl = "api/products/isalive")
         {
             this.url = url;
             this.checkUrl = checkUrl;
-            this.timeCheck = timeCheck;
-            lastChecked = DateTime.MinValue;
-            lastStatus = false;
             _client = createClient();
         }
 
         public override Status IsAlive()
         {
-            DateTime now = DateTime.Now;
-
-            TimeSpan diff = now - lastChecked;
-            if (diff.TotalSeconds < timeCheck && lastChecked != null)
-                return new WebStatus(lastStatus, url);
+           
             try
             {
                 HttpResponseMessage response = _client.GetAsync(this.checkUrl).Result;
-                lastStatus = response.IsSuccessStatusCode;
-                lastChecked = DateTime.Now;
-                return new WebStatus(lastStatus, url);
+                bool status = response.IsSuccessStatusCode;
+                return new WebStatus(status, url);
             }
             catch (Exception e)
             {
                 Logger.Error($"Error occured in WebService.IsAlive()", e);
-                lastStatus = false;
-                lastChecked = DateTime.Now;
                 return new WebStatus(false, url);
             }
         }
