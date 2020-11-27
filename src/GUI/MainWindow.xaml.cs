@@ -71,7 +71,6 @@ namespace GUI
                 {
                     dict[s.Item1] = s.Item2.getStatus();
                 }
-                
                 Dispatcher.BeginInvoke(DispatcherPriority.Render,
                          new Action(() => {
                              foreach (ServiceGrid g in panel.Children)
@@ -89,7 +88,7 @@ namespace GUI
         }
 
 
-        public void AddService(string type, string url, string adress, int checkTime)
+        public void AddService(string type, string url, string adress, int checkTime=10)
         {
             int id = t.AddService(type, url, adress, checkTime);
             ServiceGrid s = new ServiceGrid(id, url, false);
@@ -134,7 +133,8 @@ namespace GUI
             btn = new Button
             {
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Width = 30
+                Width = 50,
+                Content = "Delete"
             };
             btn.Click += Button_Click;
             Children.Add(r);

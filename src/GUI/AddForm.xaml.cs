@@ -41,7 +41,10 @@ namespace GUI
                 string url = textBoxUrl.Text;
                 string adress = textBoxAdress.Text;
                 string checkTime = textBoxCheckTime.Text;
-                ((MainWindow)Owner).AddService(serviceType, url, adress, Int32.Parse(checkTime));
+                if (checkTime != "")
+                    ((MainWindow)Owner).AddService(serviceType, url, adress, Int32.Parse(checkTime));
+                else
+                    ((MainWindow)Owner).AddService(serviceType, url, adress);
                 Close();
             } else
             {

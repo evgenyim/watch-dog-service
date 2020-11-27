@@ -27,7 +27,7 @@ namespace Controller
 			return ret;
 		}
 
-		public int AddWebservice(string url, string checkUrl="api/products/isalive", int timeCheck=10)
+		public int AddWebservice(string url, string checkUrl="api/products/isalive")
         {
 			int i;
 			bool bNum = int.TryParse(url, out i);
@@ -54,25 +54,29 @@ namespace Controller
 				timers[i].Enabled = true;
 				timers[i].AutoReset = true;
 				statuses[i] = false;
-			}
+			} else
+            {
+				i = storage.AddWebService("url");
+				timers[i] = new System.Timers.Timer(timeCheck * 1000);
+            }
 			return i;
         }
 
 		private void OnTimedEvent(Object source, ElapsedEventArgs e, int i)
 		{ 
+			bool status = storage.storage[i].IsAlive().getStatus();
 			lock (statuses)
 			{
-				statuses[i] = storage.storage[i].IsAlive().getStatus();
+				statuses[i] = status;
 			}
-			Console.WriteLine("HERR " + statuses[i].ToString());
 		}
 
 		public void DeleteService(int id)
         {
 			timers[id].Enabled = false;
 			timers.Remove(id);
-			storage.DeleteService(id);
 			statuses.Remove(id);
+			storage.DeleteService(id);
 		}
 	}
 }
