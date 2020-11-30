@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Root>
+	<Table Name="CUSTOM_COMMANDS">
+	</Table>
+	<Table Name="WebServices">
+		<Command Name="GetAllServices">
+			select w.id, Type, Url, CheckUrl, TimeCheck from WebServices w
+			join
+			Services s
+			on w.id = s.id
+		</Command>
+		<Command Name="DeleteById">
+			delete from WebServices
+			where Id = @Id
+			delete from Services
+			where Id = @Id
+		</Command>
+		<Command Name="InsertService">
+			begin tran
+			if exists (select * from Services where Id = @Id)
+			begin
+			update Services
+			set TimeCheck = @TimeCheck where Id = @Id
+			update WebServices
+			set CheckUrl = @CheckUrl where Id = @Id
+			end
+			else
+			begin
+			insert into Services
+			values (@Id, 'WebService', @Url, @TimeCheck)
+			insert into WebServices
+			values (@Id, @CheckUrl)
+			end
+			commit tran
+		</Command>
+	</Table>
+</Root>

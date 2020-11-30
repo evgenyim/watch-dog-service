@@ -7,6 +7,7 @@ using System.Timers;
 using System.Text;
 using System.Threading;
 using Model;
+using DataStorage.DataProviders;
 
 namespace Controller
 {
@@ -27,17 +28,6 @@ namespace Controller
 			return ret;
 		}
 
-		public int AddWebservice(string url, string checkUrl="api/products/isalive")
-        {
-			int i;
-			bool bNum = int.TryParse(url, out i);
-			if (bNum)
-				i = storage.AddWebService("http://localhost:" + url + "/", checkUrl);
-			else
-				i = storage.AddWebService(url, checkUrl);
-			return i;
-		}
-
 		public void AddService(Service s)
         {
 			storage.AddService(s);
@@ -48,7 +38,8 @@ namespace Controller
 			int i = -1;
 			if (type == "WebService")
             {
-				i = storage.AddWebService(url, checkUrl);
+				i = storage.AddWebService(url, checkUrl, timeCheck);
+				WebServiceDataProvider.InsertService(i, (WebService)storage.storage[i]);
 				timers[i] = new System.Timers.Timer(timeCheck * 1000);
 				timers[i].Elapsed += (source, e) => OnTimedEvent(source, e, i);
 				timers[i].Enabled = true;
@@ -77,6 +68,40 @@ namespace Controller
 			timers.Remove(id);
 			statuses.Remove(id);
 			storage.DeleteService(id);
+			WebServiceDataProvider.DeleteById(id);
+		}
+
+		public List<Tuple<int, WebService>> LoadServicesDB()
+        {
+			List<Tuple<int, WebService>> ret = new List<Tuple<int, WebService>>();
+			var webServices = WebServiceDataProvider.GetAllServices();
+			foreach(var service in webServices)
+            {
+				if (service.Type == "WebService")
+				{
+					var t = storage.AddWebServiceId(service.Id, service.Url, service.CheckUrl, service.TimeCheck);
+					int i = t.Item1;
+					var s = t.Item2;
+					timers[i] = new System.Timers.Timer(s.timeCheck * 1000);
+					timers[i].Elapsed += (source, e) => OnTimedEvent(source, e, i);
+					timers[i].Enabled = true;
+					timers[i].AutoReset = true;
+					statuses[i] = false;
+					ret.Add(new Tuple<int, WebService>(i, s));
+				}
+            }
+			return ret;
+        }
+
+		public void SaveServicesDB()
+        {
+			foreach (var item in storage.storage)
+			{
+                if (item.Value is WebService service)
+                {
+                    WebServiceDataProvider.InsertService(item.Key, service);
+                }
+            }
 		}
 	}
 }

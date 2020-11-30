@@ -79,7 +79,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TestService\ProductsService\ProductsService.csproj">
+    <ProjectReference Include="..\ProductsService\ProductsService.csproj">
       <Project>{1125bea6-8655-4a96-827b-92ae52c4440c}</Project>
       <Name>ProductsService</Name>
     </ProjectReference>

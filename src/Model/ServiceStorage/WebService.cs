@@ -10,17 +10,17 @@ using Model.Other;
 
 namespace Model
 {
-    class WebService : Service
+    public class WebService : Service
     {
 
-        private readonly string url;
-        private readonly string checkUrl;
+        public readonly string checkUrl;
         private HttpClient _client;
 
-        public WebService(string url, string checkUrl = "api/products/isalive")
+        public WebService(string url, string checkUrl = "api/products/isalive", int timeCheck=10)
         {
             this.url = url;
             this.checkUrl = checkUrl;
+            this.timeCheck = timeCheck;
             _client = createClient();
         }
 

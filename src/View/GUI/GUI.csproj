@@ -102,11 +102,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Controller\TrackingService\TrackingService.csproj">
+    <ProjectReference Include="..\..\Controller\TrackingService\TrackingService.csproj">
       <Project>{71d3ae7a-4a53-4818-b425-720d25666a04}</Project>
       <Name>TrackingService</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Model\ServiceStorage\ServiceStorage.csproj">
+    <ProjectReference Include="..\..\Model\ServiceStorage\ServiceStorage.csproj">
       <Project>{4f724bf3-0c29-48b9-98a9-049e2e7bf2c9}</Project>
       <Name>ServiceStorage</Name>
     </ProjectReference>

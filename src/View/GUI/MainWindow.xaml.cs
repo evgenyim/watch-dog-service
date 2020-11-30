@@ -34,6 +34,13 @@ namespace GUI
             InitializeComponent();
             thread = new Thread(Run);
             thread.Start();
+            var list = t.LoadServicesDB();
+            foreach(var item in list)
+            {
+                WebService service = item.Item2;
+                ServiceGrid s = new ServiceGrid(item.Item1, service.url, service.checkUrl, service.timeCheck, false);
+                panel.Children.Add(s);
+            }
         }
 
         private void Run()
@@ -91,7 +98,7 @@ namespace GUI
         public void AddService(string type, string url, string adress, int checkTime=10)
         {
             int id = t.AddService(type, url, adress, checkTime);
-            ServiceGrid s = new ServiceGrid(id, url, false);
+            ServiceGrid s = new ServiceGrid(id, url, adress, checkTime, false);
             panel.Children.Add(s);
         }
 
@@ -104,6 +111,7 @@ namespace GUI
         void Window_Closing(object sender, CancelEventArgs e)
         {
             thread.Abort();
+            t.SaveServicesDB();
         }
     }
 
@@ -115,7 +123,9 @@ namespace GUI
         private Button btn;
         public string name;
         public int id;
-        public ServiceGrid(int id, string url, bool isAlive)
+        private string checkUrl;
+        private int timeCheck;
+        public ServiceGrid(int id, string url, string checkUrl, int timeCheck, bool isAlive)
         {
             r = new Rectangle
             {
@@ -141,6 +151,8 @@ namespace GUI
             Children.Add(name_);
             Children.Add(btn);
             this.id = id;
+            this.checkUrl = checkUrl;
+            this.timeCheck = timeCheck;
         }
 
         public void setStatus(bool status)
