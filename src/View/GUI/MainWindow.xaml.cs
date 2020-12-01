@@ -17,6 +17,7 @@ using Model;
 using Model.Other;
 using System.Windows.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace GUI
 {
@@ -29,18 +30,39 @@ namespace GUI
 
         private TrackingService t = new TrackingService();
         private Thread thread;
+        private bool loadFromDb;
         public MainWindow()
         {
             InitializeComponent();
+
+            loadFromDb = Properties.Settings.Default.loadFromDB;
+
+            if (loadFromDb)
+            {
+                loadDB.IsChecked = true;
+                loadFile.IsChecked = false;
+            }
+            else {
+                loadDB.IsChecked = false;
+                loadFile.IsChecked = true;
+            }
+
+            List<Tuple<int, Service>> list;
+            if (loadFromDb)
+                list = t.LoadServicesDB();
+            else
+                list = t.LoadServicesFile();
+            foreach (var item in list)
+            {
+                if (item.Item2 is WebService service)
+                {
+                    ServiceGrid s = new ServiceGrid(item.Item1, service.url, service.checkUrl, service.timeCheck, false);
+                    panel.Children.Add(s);
+                }
+            }
+
             thread = new Thread(Run);
             thread.Start();
-            var list = t.LoadServicesDB();
-            foreach(var item in list)
-            {
-                WebService service = item.Item2;
-                ServiceGrid s = new ServiceGrid(item.Item1, service.url, service.checkUrl, service.timeCheck, false);
-                panel.Children.Add(s);
-            }
         }
 
         private void Run()
@@ -94,6 +116,15 @@ namespace GUI
             
         }
 
+        private void LoadDB_Checked(object sender, RoutedEventArgs e)
+        {
+            loadFromDb = true;
+        }
+
+        private void LoadFile_Checked(object sender, RoutedEventArgs e)
+        {
+            loadFromDb = false;
+        }
 
         public void AddService(string type, string url, string adress, int checkTime=10)
         {
@@ -111,7 +142,13 @@ namespace GUI
         void Window_Closing(object sender, CancelEventArgs e)
         {
             thread.Abort();
-            t.SaveServicesDB();
+            if (loadFromDb)
+                t.SaveServicesDB();
+            else
+                t.SaveServicesFile();
+
+            Properties.Settings.Default.loadFromDB = loadFromDb;
+            Properties.Settings.Default.Save();
         }
     }
 
@@ -143,8 +180,9 @@ namespace GUI
             btn = new Button
             {
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Width = 50,
-                Content = "Delete"
+                Width = 80,
+                Content = "Delete",
+                FontSize = 10
             };
             btn.Click += Button_Click;
             Children.Add(r);

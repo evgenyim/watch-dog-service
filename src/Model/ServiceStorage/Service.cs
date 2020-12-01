@@ -6,8 +6,8 @@ namespace Model
 {
     abstract public class Service
     {
-        public string url;
-        public int timeCheck;
+        public string url { get; set; }
+        public int timeCheck { get; set; }
         abstract public Status IsAlive();
     }
 }

@@ -48,7 +48,9 @@
     <Compile Include="Mappers\WebServiceDTOMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DTO\DTO.csproj">
       <Project>{4dd74514-892c-4261-8ab7-465b3889a59e}</Project>

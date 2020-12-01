@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.Remoting.Messaging;
 using Model.Other;
 
 namespace Model
@@ -13,8 +12,13 @@ namespace Model
     public class WebService : Service
     {
 
-        public readonly string checkUrl;
+        public string checkUrl { get; set; }
         private HttpClient _client;
+
+        public WebService()
+        {
+            _client = createClient();
+        }
 
         public WebService(string url, string checkUrl = "api/products/isalive", int timeCheck=10)
         {

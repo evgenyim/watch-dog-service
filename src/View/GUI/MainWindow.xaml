@@ -6,13 +6,19 @@
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
         Closing="Window_Closing"
-        Title="MainWindow" Height="500" Width="650">
+        Title="MainWindow" Height="550" Width="700"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
     <Grid Margin="0,0,-0.4,0">
-        <Button x:Name="button1"  Width="100" Height="30" Content="Add Service" Click="Button_Click" Margin="498,10,10.4,380" />
+        <StackPanel x:Name="loadPanel" Margin="0, 20, 0, 0" VerticalAlignment="Top" Height="50" Width="100">
+            <RadioButton x:Name="loadDB" GroupName="LoadType" Content="Database" IsChecked="True" Checked="LoadDB_Checked" />
+            <RadioButton x:Name="loadFile" GroupName="LoadType" Content="File" Checked="LoadFile_Checked"/>
+        </StackPanel>
+        <Button x:Name="button1" Width="120" Height="30"  Content="Add Service" Click="Button_Click" Margin="494,35,28.6,405.4" />
         <Button x:Name="button2"  Width="100" Height="30" Content="Check" Click="Button_Click_Check" Margin="10,10,498.4,380" />
-        <ScrollViewer Margin="0,55,0,0">
+        <ScrollViewer Margin="0,75,0.6,0.4">
             <StackPanel x:Name="panel" Height="355">
-                
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

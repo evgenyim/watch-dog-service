@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Model.Other;
+
+
 namespace Model
 {
+    [Serializable]
     public class ServiceStorage: IServiceStorage
     {
         public Dictionary<int, Service> storage = new Dictionary<int, Service>();
@@ -55,6 +59,11 @@ namespace Model
         public void DeleteService(int id)
         {
             storage.Remove(id);
+        }
+
+        public void updateLastId()
+        {
+            lastId = storage.Keys.Max() + 1;
         }
     }
 }
