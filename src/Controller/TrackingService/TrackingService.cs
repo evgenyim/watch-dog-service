@@ -48,6 +48,30 @@ namespace Controller
 			return i;
 		}
 
+		public void UpdateService(int Id, string type, string checkUrl = "api/products/isalive", int timeCheck = 10)
+		{
+			if (type == "WebService")
+			{
+				storage.UpdateWebService(Id, checkUrl, timeCheck);
+				WebServiceDataProvider.InsertService(Id, (WebService)storage.storage[Id]);
+				timers[Id].Interval = timeCheck * 1000;
+			}
+			else
+			{
+				storage.UpdateService(Id, timeCheck);
+				timers[Id].Interval = timeCheck * 1000;
+			}
+		}
+
+		public void DeleteService(int id)
+		{
+			timers[id].Enabled = false;
+			timers.Remove(id);
+			statuses.Remove(id);
+			storage.DeleteService(id);
+			WebServiceDataProvider.DeleteById(id);
+		}
+
 		private void AddTimer(int i, int timeCheck)
 		{
 			timers[i] = new System.Timers.Timer(timeCheck * 1000);
@@ -64,15 +88,6 @@ namespace Controller
 			{
 				statuses[i] = status;
 			}
-		}
-
-		public void DeleteService(int id)
-		{
-			timers[id].Enabled = false;
-			timers.Remove(id);
-			statuses.Remove(id);
-			storage.DeleteService(id);
-			WebServiceDataProvider.DeleteById(id);
 		}
 
 		public List<Tuple<int, Service>> LoadServicesDB()

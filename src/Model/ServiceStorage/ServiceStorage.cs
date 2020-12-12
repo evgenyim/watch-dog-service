@@ -56,6 +56,33 @@ namespace Model
             return new Tuple<int, WebService>(lastId - 1, s);
         }
 
+        public void UpdateService(int Id, int timeCheck)
+        {
+            try
+            {
+                Service s = storage[Id];
+                s.timeCheck = timeCheck;
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error occured while updating Service", e);
+            }
+        }
+
+        public void UpdateWebService(int Id, string checkUrl, int timeCheck)
+        {
+            try
+            {
+                WebService s = (WebService)storage[Id];
+                s.checkUrl = checkUrl;
+                s.timeCheck = timeCheck;
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error occured while updating WebService", e);
+            }
+        }
+
         public void DeleteService(int id)
         {
             storage.Remove(id);

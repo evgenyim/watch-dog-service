@@ -4,26 +4,73 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="AddForm" Height="270" Width="600">
+        Title="AddForm" Height="220" Width="600">
     <Grid>
-        <ComboBox Name="serviceList" Height="30" VerticalAlignment="Top">
+        <ComboBox Name="serviceList" Height="50" VerticalAlignment="Top" materialDesign:HintAssist.IsFloating="true"
+                  materialDesign:HintAssist.Hint="Service Type" Margin="8,0">
             <TextBlock>WebService</TextBlock>
             <TextBlock>AnotherService</TextBlock>
         </ComboBox>
-        <TextBlock x:Name="textBlockUrl" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="23,51,430.6,155.8">
-            <Run FontSize="12" Foreground="Black" FontWeight="Bold">Enter service url</Run>
-        </TextBlock>
-        <TextBox x:Name="textBoxUrl" Width="140" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="23,84,0,0" ></TextBox>
-        <TextBlock x:Name="textBlockAdress" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="208,51,205.6,147.8">
-            <Run FontSize="12" Foreground="Black" FontWeight="Bold">Enter additional adress to check</Run>
-        </TextBlock>
-        <TextBox x:Name="textBoxAdress" Width="180" Height="30" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="193,84,191,0" />
-        <TextBlock x:Name="textBlockCheckTime" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="429,51,18.6,155.8" RenderTransformOrigin="3.028,3.267">
-            <Run FontSize="12" Foreground="Black" FontWeight="Bold">Enter check timeout</Run>
-        </TextBlock>
-        <TextBox x:Name="textBoxCheckTime" Width="146" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,84,19,0" PreviewTextInput="NumberValidationTextBox" />
-        <Button x:Name="addButton" Content="Add Service" Click="Button_Click" Margin="134,163,134.4,29" />
-
+        <Grid Margin="8,55,7.6,0" Height="126" VerticalAlignment="Top">
+            <Grid.Resources>
+                <Style
+                    TargetType="TextBox"
+                    BasedOn="{StaticResource MaterialDesignTextBox}">
+                    <Setter
+                        Property="materialDesign:HintAssist.IsFloating"
+                        Value="True" />
+                    <Setter
+                        Property="Margin"
+                        Value="8,8,8,8" />
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    Width="*" />
+                <ColumnDefinition
+                    Width="*" />
+                <ColumnDefinition
+                    Width="*" />
+                <ColumnDefinition
+                    Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition
+                Height="*" />
+                <RowDefinition
+                Height="*" />
+            </Grid.RowDefinitions>
+            <TextBox
+            x:Name="textBoxUrl"
+            Grid.Column="0"
+            Grid.Row="0"
+            materialDesign:HintAssist.Hint="Service url"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            FontSize="18"
+            IsEnabled="True"/>
+            <TextBox
+            x:Name="textBoxAdress"
+            Grid.Column="1"
+            Grid.Row="0"
+            materialDesign:HintAssist.Hint="Service check url"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            FontSize="18"/>
+            <TextBox
+            x:Name="textBoxCheckTime"
+            Grid.Column="2"
+            Grid.Row="0"
+            materialDesign:HintAssist.Hint="Check interval"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            PreviewTextInput="NumberValidationTextBox"
+            FontSize="18"/>
+            <StackPanel
+                Grid.Column="1"
+                Grid.Row="1">
+                <Button x:Name="addButton" Content="Add Service" Click="Button_Click" Margin="16" />
+            </StackPanel>
+        </Grid>
+        
     </Grid>
 </Window>

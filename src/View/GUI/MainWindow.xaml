@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GUI"
+        xmlns:local="clr-namespace:GUI" 
         mc:Ignorable="d"
         Closing="Window_Closing"
         Title="MainWindow" Height="550" Width="700"
@@ -16,9 +16,8 @@
         </StackPanel>
         <Button x:Name="button1" Width="120" Height="30"  Content="Add Service" Click="Button_Click" Margin="494,35,28.6,405.4" />
         <Button x:Name="button2"  Width="100" Height="30" Content="Check" Click="Button_Click_Check" Margin="10,10,498.4,380" />
-        <ScrollViewer Margin="0,75,0.6,0.4">
-            <StackPanel x:Name="panel" Height="355">
-
+        <ScrollViewer CanContentScroll="True" Margin="0,100,1,0.8" Padding="2">
+            <StackPanel x:Name="panel" Height="355" >
             </StackPanel>
         </ScrollViewer>
     </Grid>

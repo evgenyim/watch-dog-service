@@ -56,7 +56,7 @@ namespace GUI
             {
                 if (item.Item2 is WebService service)
                 {
-                    ServiceGrid s = new ServiceGrid(item.Item1, service.url, service.checkUrl, service.timeCheck, false);
+                    ServiceGrid s = new ServiceGrid(item.Item1, "WebService", service.url, service.checkUrl, service.timeCheck, false);
                     panel.Children.Add(s);
                 }
             }
@@ -129,8 +129,21 @@ namespace GUI
         public void AddService(string type, string url, string adress, int checkTime=10)
         {
             int id = t.AddService(type, url, adress, checkTime);
-            ServiceGrid s = new ServiceGrid(id, url, adress, checkTime, false);
+            ServiceGrid s = new ServiceGrid(id, type, url, adress, checkTime, false);
             panel.Children.Add(s);
+        }
+
+        public void UpdateService(int Id, string type, string adress, int checkTime = 10)
+        {
+            t.UpdateService(Id, type, adress, checkTime);
+            foreach(ServiceGrid child in panel.Children)
+            {
+                if (child.id == Id)
+                {
+                    child.Update(adress, checkTime);
+                    break;
+                }
+            }
         }
 
         public void DeleteService(int id)
@@ -157,40 +170,54 @@ namespace GUI
         private Rectangle r;
         private TextBlock name_;
         private bool isAlive;
-        private Button btn;
+        private Button deleteBtn;
+        private Button settingsBtn;
         public string name;
+        private string url;
+        private string type;
         public int id;
         private string checkUrl;
-        private int timeCheck;
-        public ServiceGrid(int id, string url, string checkUrl, int timeCheck, bool isAlive)
+        private int checkTime;
+        public ServiceGrid(int id, string type, string url, string checkUrl, int checkTime, bool isAlive)
         {
             r = new Rectangle
             {
-                HorizontalAlignment = HorizontalAlignment.Left
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = 15
             };
             setStatus(isAlive);
-            r.Width = 10;
             name_ = new TextBlock
             {
                 Text = url,
                 FontSize = 15,
-                Margin = new Thickness(10, 0, 0, 0)
+                Margin = new Thickness(20, 0, 0, 0)
             };
             name = url;
-            btn = new Button
+            this.url = url;
+            this.type = type;
+            deleteBtn = new Button
             {
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Width = 80,
-                Content = "Delete",
-                FontSize = 10
+                Width = 50,
+                Content = new MaterialDesignThemes.Wpf.PackIcon { Kind = MaterialDesignThemes.Wpf.PackIconKind.Delete },
+                Margin = new Thickness(0, 0, 10, 0)
             };
-            btn.Click += Button_Click;
+            deleteBtn.Click += Delete_Button_Click;
+            settingsBtn = new Button
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Width = 50,
+                Content = new MaterialDesignThemes.Wpf.PackIcon { Kind = MaterialDesignThemes.Wpf.PackIconKind.Cog },
+                Margin = new Thickness(0, 0, 63, 0)
+            };
+            settingsBtn.Click += Settings_Button_Click;
             Children.Add(r);
             Children.Add(name_);
-            Children.Add(btn);
+            Children.Add(deleteBtn);
+            Children.Add(settingsBtn);
             this.id = id;
             this.checkUrl = checkUrl;
-            this.timeCheck = timeCheck;
+            this.checkTime = checkTime;
         }
 
         public void setStatus(bool status)
@@ -198,22 +225,44 @@ namespace GUI
             isAlive = status;
             if (isAlive)
             {
-                r.Fill = new SolidColorBrush(Colors.Green);
+                r.Fill = new SolidColorBrush(Color.FromRgb(0, 113, 226));
             }
             else
             {
-                r.Fill = new SolidColorBrush(Colors.Red);
+                r.Fill = new SolidColorBrush(Color.FromRgb(33, 33, 33));
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        public void Update(string adress, int checkTime)
         {
-            var parent = VisualTreeHelper.GetParent(this);
-            var parentAsPanel = parent as Panel;
-            parentAsPanel.Children.Remove(this);
-            MainWindow parentWindow = (MainWindow) Window.GetWindow(parent);
-            parentWindow.DeleteService(id);
+            checkUrl = adress;
+            this.checkTime = checkTime;
+        }
 
+        private void Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this service?", "Delete", MessageBoxButton.OKCancel);
+            switch (result)
+            {
+                case MessageBoxResult.OK:
+                    var parent = VisualTreeHelper.GetParent(this);
+                    var parentAsPanel = parent as Panel;
+                    parentAsPanel.Children.Remove(this);
+                    MainWindow parentWindow = (MainWindow)Window.GetWindow(parent);
+                    parentWindow.DeleteService(id);
+                    break;
+                case MessageBoxResult.Cancel:
+                    break;
+            }
+        }
+
+        private void Settings_Button_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsForm f = new SettingsForm(id, type, url, checkUrl, checkTime);
+            var parent = VisualTreeHelper.GetParent(this);
+            MainWindow parentWindow = (MainWindow)Window.GetWindow(parent);
+            f.Owner = parentWindow;
+            f.Show();
         }
     }
 }
