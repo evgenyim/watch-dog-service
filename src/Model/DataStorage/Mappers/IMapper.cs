@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace DataStorage.Mappers
+namespace Model.DataStorage.Mappers
 {
     /// <summary>
     /// This interface used to read current row from sql data reader to DTO object

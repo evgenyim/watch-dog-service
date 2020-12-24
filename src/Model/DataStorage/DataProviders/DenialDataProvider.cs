@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using DataStorage.Mappers;
-using DTO;
-using SqlHelper;
-using Model;
+using Model.DataStorage.Mappers;
+using Model.DTO;
+using Model.SqlHelper;
+using Model.ServiceStorage;
 
-namespace DataStorage.DataProviders
+namespace Model.DataStorage.DataProviders
 {
     public class DenialDataProvider
     {
@@ -45,9 +45,9 @@ namespace DataStorage.DataProviders
         {
             string sqlQuery = XmlStrings.GetString(Tables.Denials, "InsertDenial");
             SqlParameter paramId = new SqlParameter("@Id", Id);
-            SqlParameter paramServiceId = new SqlParameter("@ServiceId", denial.serviceId);
-            SqlParameter paramStartWorking = new SqlParameter("@StartWorking", denial.startWorking);
-            SqlParameter paramTime = new SqlParameter("@Time", denial.time);
+            SqlParameter paramServiceId = new SqlParameter("@ServiceId", denial.ServiceId);
+            SqlParameter paramStartWorking = new SqlParameter("@StartWorking", denial.StartWorking);
+            SqlParameter paramTime = new SqlParameter("@Time", denial.Time);
 
             var result = DBHelper.GetData(
                 new DenialDTOMapper(),

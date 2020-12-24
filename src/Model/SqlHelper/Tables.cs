@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SqlHelper
+namespace Model.SqlHelper
 {
     public class Tables
     {

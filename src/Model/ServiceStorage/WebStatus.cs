@@ -4,34 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model
+namespace Model.ServiceStorage
 {
     public class WebStatus: Status
     {
-        private bool status;
-        private string url;
+        public string Url;
 
-        public WebStatus(bool status, string url)
+        public WebStatus(int id, bool status, string url)
         {
-            this.status = status;
-            this.url = url;
+            ServiceId = id;
+            IsAlive = status;
+            Url = url;
         }
 
         public override string toString()
         {
-            if (status)
-                return url + " is working";
-            return url + " is not working";
-        }
-
-        public override string getUrl()
-        {
-            return url;
-        }
-
-        public override bool getStatus()
-        {
-            return status;
+            if (IsAlive)
+                return Url + " is working";
+            return Url + " is not working";
         }
     }
 }

@@ -1,40 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Timers;
-using Model;
-using DataStorage.DataProviders;
+using Model.ServiceStorage;
+using Model.DataStorage.DataProviders;
 using System.IO;
 using Newtonsoft.Json;
 using Model.Other;
+using System.Collections.Concurrent;
+using Controller.Interfaces;
+using ModelDataStorage.DataProviders;
 
-namespace Controller
+namespace Controller.TrackingService
 {
 	public class TrackingService : ITrackingService
 	{
 		private ServiceStorage storage = new ServiceStorage();
-		public Dictionary<int, bool> statuses = new Dictionary<int, bool>();
-		public Dictionary<int, Denial> denials = new Dictionary<int, Denial>();
-		public List<int> newDenials = new List<int>();
+		public ConcurrentDictionary<int, bool> Statuses = new ConcurrentDictionary<int, bool>();
+		public ConcurrentDictionary<int, Denial> Denials = new ConcurrentDictionary<int, Denial>();
+		public List<int> NewDenials = new List<int>();
 		private Dictionary<int, Timer> timers = new Dictionary<int, Timer>();
 		private int nextDenialIdx = 0;
 		private List<int> returnDenials = new List<int>();
-		private int lastCheckedDenials = 0;
 
 
-		public List<Tuple<int, Status>> CheckServices()
+		public List<Status> CheckServices()
 		{
 			var ret =  storage.CheckServices();
-			foreach (var item in ret)
+			foreach (var status in ret)
             {
-				int i = item.Item1;
-				bool s = item.Item2.getStatus();
-				if (statuses.ContainsKey(i) && s != statuses[i])
+				int i = status.ServiceId;
+				bool s = status.IsAlive;
+				if (Statuses.ContainsKey(i) && s != Statuses[i])
 				{
-					denials[nextDenialIdx++] = new Denial(i, s);
-					newDenials.Add(nextDenialIdx - 1);
+					Denials[nextDenialIdx++] = new Denial(i, s);
+					NewDenials.Add(nextDenialIdx - 1);
 					returnDenials.Add(nextDenialIdx - 1);
 				}
-				statuses[i] = s;
+				Statuses[i] = s;
 			}
 			return ret;
 		}
@@ -49,13 +51,13 @@ namespace Controller
 			int i = -1;
 			if (type == "WebService")
 			{
-				i = storage.AddWebService(url, checkUrl, timeCheck);
-				WebServiceDataProvider.InsertService(i, (WebService)storage.storage[i]);
+				i = storage.AddService(url, checkUrl, timeCheck);
+				WebServiceDataProvider.InsertService((WebService)storage.Storage[i]);
 				AddTimer(i, timeCheck);
 			}
 			else
 			{
-				i = storage.AddWebService("url");
+				i = storage.AddService("url");
 				timers[i] = new Timer(timeCheck * 1000);
 			}
 			return i;
@@ -65,8 +67,8 @@ namespace Controller
 		{
 			if (type == "WebService")
 			{
-				storage.UpdateWebService(Id, checkUrl, timeCheck);
-				WebServiceDataProvider.InsertService(Id, (WebService)storage.storage[Id]);
+				storage.UpdateService(Id, checkUrl, timeCheck);
+				WebServiceDataProvider.InsertService((WebService)storage.Storage[Id]);
 				timers[Id].Interval = timeCheck * 1000;
 			}
 			else
@@ -80,7 +82,7 @@ namespace Controller
 		{
 			timers[id].Enabled = false;
 			timers.Remove(id);
-			statuses.Remove(id);
+			Statuses.TryRemove(id, out bool _);
 			storage.DeleteService(id);
 			WebServiceDataProvider.DeleteById(id);
 			DenialDataProvider.DeleteByServiceId(id);
@@ -96,28 +98,22 @@ namespace Controller
 
 		private void OnTimedEvent(Object source, ElapsedEventArgs e, int i)
 		{
-			bool status = storage.storage[i].IsAlive().getStatus();
-			lock (statuses)
+			bool status = storage.Storage[i].IsAlive().IsAlive;
+			if (Statuses.ContainsKey(i) && status != Statuses[i])
 			{
-				if (statuses.ContainsKey(i) && status != statuses[i])
-				{
-					lock (denials)
-					{
-						denials[nextDenialIdx++] = new Denial(i, status);
-						newDenials.Add(nextDenialIdx - 1);
-						returnDenials.Add(nextDenialIdx - 1);
-					}
-				}
-				statuses[i] = status;
+				Denials[nextDenialIdx++] = new Denial(i, status);
+				NewDenials.Add(nextDenialIdx - 1);
+				returnDenials.Add(nextDenialIdx - 1);
 			}
+			Statuses[i] = status;
 		}
 
-		public List<Tuple<int, Denial, string>> GetDenials()
+		public List<IndexedDenial> GetDenials()
         {
-			List<Tuple<int, Denial, string>> ret = new List<Tuple<int, Denial, string>>();
+			List<IndexedDenial> ret = new List<IndexedDenial>();
 			foreach (int i in returnDenials)
             {
-				ret.Add(new Tuple<int, Denial, string>(i, denials[i], storage.storage[denials[i].serviceId].url));
+				ret.Add(new IndexedDenial(i, Denials[i], storage.Storage[Denials[i].ServiceId].Url));
             }
 			returnDenials.Clear();
 			return ret;
@@ -125,144 +121,145 @@ namespace Controller
 
 		public void DeleteDenial(int id)
         {
-			denials.Remove(id);
+			Denials.TryRemove(id, out Denial _);
 			DenialDataProvider.DeleteById(id);
 		}
 
-		public List<Tuple<int, Service>> LoadServicesDB()
+		public List<Service> LoadServices(bool fromDB)
 		{
-			List<Tuple<int, Service>> ret = new List<Tuple<int, Service>>();
-			var webServices = WebServiceDataProvider.GetAllServices();
-			foreach (var service in webServices)
+			List<Service> ret = new List<Service>();
+			if (fromDB)
 			{
-				if (service.Type == "WebService")
+				var webServices = WebServiceDataProvider.GetAllServices();
+				foreach (var service in webServices)
 				{
-					var t = storage.AddWebServiceId(service.Id, service.Url, service.CheckUrl, service.TimeCheck);
-					int i = t.Item1;
-					var s = t.Item2;
-					AddTimer(i, s.timeCheck);
-					ret.Add(new Tuple<int, Service>(i, s));
+					if (service.Type == "WebService")
+					{
+						var addedService = storage.AddServiceId(service.Id, service.Url, service.CheckUrl, service.TimeCheck);
+						AddTimer(service.Id, service.TimeCheck);
+						ret.Add(addedService);
+					}
 				}
 			}
-			return ret;
-		}
-
-		public List<Tuple<int, Denial, string>> LoadDenialsDB()
-        {
-			var oldDenials = DenialDataProvider.GetAllDenials();
-			List<Tuple<int, Denial, string>> ret = new List<Tuple<int, Denial, string>>();
-			foreach (var denial in oldDenials)
-			{
-				var denial_ = new Denial(denial.ServiceId, denial.StartWorking, denial.Time);
-				denials[denial.Id] = denial_;
-				nextDenialIdx = Math.Max(nextDenialIdx, denial.Id) + 1;
-				ret.Add(new Tuple<int, Denial, string>(denial.Id, denial_, storage.storage[denial_.serviceId].url));
-			}
-			return ret;
-		}
-
-		public void SaveServicesDB()
-		{
-			foreach (var item in storage.storage)
-			{
-				if (item.Value is WebService service)
-				{
-					WebServiceDataProvider.InsertService(item.Key, service);
-				}
-			}
-		}
-
-		public void SaveDenialsDB()
-        {
-			foreach (var index in newDenials)
+            else
             {
-				if (denials.ContainsKey(index))
-                {
-					DenialDataProvider.InsertDenial(index, denials[index]);
-                }
-				else
-                {
-					DenialDataProvider.DeleteById(index);
-                }
-            }
+				string jsonString;
+				try
+				{
+					jsonString = File.ReadAllText(Properties.Settings.Default.ServicesFileName);
+					var settings = new JsonSerializerSettings
+					{
+						TypeNameHandling = TypeNameHandling.All
+					};
+					storage = (ServiceStorage)JsonConvert.DeserializeObject(jsonString, settings);
+					storage.UpdateLastId();
+				}
+				catch (Exception e)
+				{
+					Logger.Error("Error occured in LoadServicesFile", e);
+				}
+
+				foreach (var item in storage.Storage)
+				{
+					int i = item.Key;
+					if (item.Value is WebService service)
+					{
+						AddTimer(i, service.TimeCheck);
+						ret.Add(service);
+					}
+				}
+			}
+			return ret;
+		}
+
+		public List<IndexedDenial> LoadDenials(bool fromDB)
+        {
+			List<IndexedDenial> ret = new List<IndexedDenial>();
+			if (fromDB)
+			{
+				var oldDenials = DenialDataProvider.GetAllDenials();
+				foreach (var denial in oldDenials)
+				{
+					var denial_ = new Denial(denial.ServiceId, denial.StartWorking, denial.Time);
+					Denials[denial.Id] = denial_;
+					nextDenialIdx = Math.Max(nextDenialIdx, denial.Id) + 1;
+					ret.Add(new IndexedDenial(denial.Id, denial_, storage.Storage[denial_.ServiceId].Url));
+				}
+			}
+			else
+            {
+				string jsonString;
+				try
+				{
+					jsonString = File.ReadAllText(Properties.Settings.Default.DenialsFileName);
+					var settings = new JsonSerializerSettings
+					{
+						TypeNameHandling = TypeNameHandling.All
+					};
+					Denials = (ConcurrentDictionary<int, Denial>)JsonConvert.DeserializeObject(jsonString, settings);
+					foreach (var item in Denials)
+					{
+						Denial denial = item.Value;
+						nextDenialIdx = Math.Max(nextDenialIdx, item.Key) + 1;
+						ret.Add(new IndexedDenial(item.Key, denial, storage.Storage[denial.ServiceId].Url));
+					}
+				}
+				catch (Exception e)
+				{
+					Logger.Error("Error occured in LoadDenialsFile", e);
+				}
+			}
+			return ret;
+		}
+
+		public void SaveServices(bool toDB)
+		{
+			if (toDB)
+			{
+				foreach (var item in storage.Storage)
+				{
+					if (item.Value is WebService service)
+					{
+						WebServiceDataProvider.InsertService(service);
+					}
+				}
+			}
+			else
+            {
+				var settings = new JsonSerializerSettings
+				{
+					TypeNameHandling = TypeNameHandling.All
+				};
+				string s = JsonConvert.SerializeObject(storage, settings);
+				File.WriteAllText(Properties.Settings.Default.ServicesFileName, s);
+			}
+		}
+
+		public void SaveDenials(bool toDB)
+        {
+			if (toDB)
+			{
+				foreach (var index in NewDenials)
+				{
+					if (Denials.ContainsKey(index))
+					{
+						DenialDataProvider.InsertDenial(index, Denials[index]);
+					}
+					else
+					{
+						DenialDataProvider.DeleteById(index);
+					}
+				}
+			}
+			else
+            {
+				var settings = new JsonSerializerSettings
+				{
+					TypeNameHandling = TypeNameHandling.All
+				};
+				string s = JsonConvert.SerializeObject(Denials, settings);
+				File.WriteAllText(Properties.Settings.Default.ServicesFileName, s);
+			}
         }
-
-		public List<Tuple<int, Service>> LoadServicesFile()
-		{
-			string jsonString;
-			try
-            {
-				jsonString = File.ReadAllText("Services.txt");
-				var settings = new JsonSerializerSettings
-				{
-					TypeNameHandling = TypeNameHandling.All
-				};
-				storage = (ServiceStorage)JsonConvert.DeserializeObject(jsonString, settings);
-				storage.updateLastId();
-			}
-			catch (Exception e)
-            {
-				Logger.Error("Error occured in LoadServicesFile", e);
-            }
-			
-			List<Tuple<int, Service>> ret = new List<Tuple<int, Service>>();
-			foreach(var item in storage.storage)
-			{
-				int i = item.Key;
-				if (item.Value is WebService service)
-				{
-					AddTimer(i, service.timeCheck);
-					ret.Add(new Tuple<int, Service>(i, service));
-				}
-			}
-			return ret;
-		}
-
-		public List<Tuple<int, Denial, string>> LoadDenialsFile()
-        {
-			string jsonString;
-			List<Tuple<int, Denial, string>> ret = new List<Tuple<int, Denial, string>>();
-			try
-			{
-				jsonString = File.ReadAllText("Denials.txt");
-				var settings = new JsonSerializerSettings
-				{
-					TypeNameHandling = TypeNameHandling.All
-				};
-				denials = (Dictionary<int, Denial>) JsonConvert.DeserializeObject(jsonString, settings);
-				foreach (var item in denials)
-				{
-					Denial denial = item.Value;
-					nextDenialIdx = Math.Max(nextDenialIdx, item.Key) + 1;
-					ret.Add(new Tuple<int, Denial, string>(item.Key, denial, storage.storage[denial.serviceId].url));
-				}
-			}
-			catch (Exception e)
-			{
-				Logger.Error("Error occured in LoadServicesFile", e);
-			}
-			return ret;
-		}
-
-		public void SaveServicesFile()
-		{
-			var settings = new JsonSerializerSettings
-			{
-				TypeNameHandling = TypeNameHandling.All
-			};
-			string s = JsonConvert.SerializeObject(storage, settings);
-			File.WriteAllText("Services.txt", s);
-		}
-
-		public void SaveDenialsFile()
-        {
-			var settings = new JsonSerializerSettings
-			{
-				TypeNameHandling = TypeNameHandling.All
-			};
-			string s = JsonConvert.SerializeObject(denials, settings);
-			File.WriteAllText("Denials.txt", s);
-		}
-
 	}
 }

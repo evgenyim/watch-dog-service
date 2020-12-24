@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using DataStorage.Mappers;
+using Model.DataStorage.Mappers;
 using Model.Other;
 
-namespace DataStorage
+namespace Model.DataStorage
 {
     public class DBHelper
     {

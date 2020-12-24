@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Data.SqlClient;
-using DTO;
+using Model.DTO;
 
-namespace DataStorage.Mappers
+namespace Model.DataStorage.Mappers
 {
     class DenialDTOMapper : IMapper<DenialDTO>
     {

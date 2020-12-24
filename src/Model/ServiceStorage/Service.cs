@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Model
+namespace Model.ServiceStorage
 {
     abstract public class Service
     {
-        public string url { get; set; }
-        public int timeCheck { get; set; }
+        public int Id { get; set; }
+        public string Url { get; set; }
+        public int TimeCheck { get; set; }
         abstract public Status IsAlive();
     }
 }

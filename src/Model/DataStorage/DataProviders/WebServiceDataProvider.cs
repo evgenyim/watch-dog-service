@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Xml;
-using DataStorage.Mappers;
-using DTO;
-using SqlHelper;
-using Model;
+using Model.DataStorage.Mappers;
+using Model.DTO;
+using Model.SqlHelper;
+using Model.ServiceStorage;
+using Model.DataStorage;
 
-namespace DataStorage.DataProviders
+namespace ModelDataStorage.DataProviders
 {
     public class WebServiceDataProvider
     {
@@ -32,13 +33,13 @@ namespace DataStorage.DataProviders
             return result;
         }
 
-        public static IList<WebServiceDTO> InsertService(int Id, WebService service)
+        public static IList<WebServiceDTO> InsertService(WebService service)
         {
             string sqlQuery = XmlStrings.GetString(Tables.WebServices, "InsertService");
-            SqlParameter paramId = new SqlParameter("@Id", Id);
-            SqlParameter paramUrl = new SqlParameter("@Url", service.url);
-            SqlParameter paramCheckUrl = new SqlParameter("@CheckUrl", service.checkUrl);
-            SqlParameter paramTimeCheck = new SqlParameter("@TimeCheck", service.timeCheck);
+            SqlParameter paramId = new SqlParameter("@Id", service.Id);
+            SqlParameter paramUrl = new SqlParameter("@Url", service.Url);
+            SqlParameter paramCheckUrl = new SqlParameter("@CheckUrl", service.CheckUrl);
+            SqlParameter paramTimeCheck = new SqlParameter("@TimeCheck", service.TimeCheck);
 
             var result = DBHelper.GetData(
                 new WebServiceDTOMapper(),

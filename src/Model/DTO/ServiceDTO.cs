@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DTO
+namespace Model.DTO
 {
     public abstract class ServiceDTO
     {

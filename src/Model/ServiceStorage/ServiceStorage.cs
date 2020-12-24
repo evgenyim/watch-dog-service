@@ -1,78 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Model.ServiceStorage.Interfaces;
 using Model.Other;
 
 
-namespace Model
+namespace Model.ServiceStorage
 {
     [Serializable]
     public class ServiceStorage: IServiceStorage
     {
-        public Dictionary<int, Service> storage = new Dictionary<int, Service>();
+        public Dictionary<int, Service> Storage = new Dictionary<int, Service>();
         private int lastId = 0;
 
-        public List<Tuple<int, Status>> CheckServices()
+        public List<Status> CheckServices()
         {
-            List<Tuple<int, Status>> ret = new List<Tuple<int, Status>>();
-            foreach (var s in storage)
+            List<Status> ret = new List<Status>();
+            foreach (var s in Storage)
             {
                 Status res = s.Value.IsAlive();
-                ret.Add(new Tuple<int, Status>(s.Key, res));
+                ret.Add(res);
             }
             return ret;
         }
 
         public int AddService(Service s)
         {
-            storage[lastId++] = s;
+            Storage[lastId++] = s;
             return lastId - 1;
         }
 
-        public int AddWebService(string url)
+        public int AddService(string url)
         {
-            WebService s = new WebService(url);
-            storage[lastId++] = s;
+            WebService s = new WebService(lastId, url);
+            Storage[lastId++] = s;
             return lastId - 1;
         }
 
-        public int AddWebService(string url, string checkUrl="api/products/isalive", int timeCheck=10)
-        {
-            if (checkUrl == "")
-            {
-                checkUrl = "api/products/isalive";
-            }
-            WebService s = new WebService(url, checkUrl, timeCheck);
-            storage[lastId++] = s;
-            return lastId - 1;
-        }
-
-        public Tuple<int, WebService> AddWebServiceId(int Id, string url, string checkUrl = "api/products/isalive", int timeCheck = 10)
+        public int AddService(string url, string checkUrl="api/products/isalive", int timeCheck=10)
         {
             if (checkUrl == "")
             {
                 checkUrl = "api/products/isalive";
             }
-            WebService s = new WebService(url, checkUrl, timeCheck);
+            WebService s = new WebService(lastId, url, checkUrl, timeCheck);
+            Storage[lastId++] = s;
+            return lastId - 1;
+        }
+
+        public WebService AddServiceId(int Id, string url, string checkUrl = "api/products/isalive", int timeCheck = 10)
+        {
+            if (checkUrl == "")
+            {
+                checkUrl = "api/products/isalive";
+            }
+            WebService s = new WebService(Id, url, checkUrl, timeCheck);
             try
             {
-                storage[Id] = s;
+                Storage[Id] = s;
                 lastId = Math.Max(lastId, Id) + 1;
             }
             catch (Exception e)
             {
                 Logger.Error("Error occured while adding WebService by Id", e);
-                storage[lastId++] = s;
+                Storage[lastId++] = s;
             }
-            return new Tuple<int, WebService>(lastId - 1, s);
+            return s;
         }
 
         public void UpdateService(int Id, int timeCheck)
         {
             try
             {
-                Service s = storage[Id];
-                s.timeCheck = timeCheck;
+                Service s = Storage[Id];
+                s.TimeCheck = timeCheck;
             }
             catch (Exception e)
             {
@@ -80,13 +81,13 @@ namespace Model
             }
         }
 
-        public void UpdateWebService(int Id, string checkUrl, int timeCheck)
+        public void UpdateService(int Id, string checkUrl, int timeCheck)
         {
             try
             {
-                WebService s = (WebService)storage[Id];
-                s.checkUrl = checkUrl;
-                s.timeCheck = timeCheck;
+                WebService s = (WebService)Storage[Id];
+                s.CheckUrl = checkUrl;
+                s.TimeCheck = timeCheck;
             }
             catch (Exception e)
             {
@@ -96,12 +97,12 @@ namespace Model
 
         public void DeleteService(int id)
         {
-            storage.Remove(id);
+            Storage.Remove(id);
         }
 
-        public void updateLastId()
+        public void UpdateLastId()
         {
-            lastId = storage.Keys.Max() + 1;
+            lastId = Storage.Keys.Max() + 1;
         }
     }
 }

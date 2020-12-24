@@ -7,21 +7,22 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Model.Other;
 
-namespace Model
+namespace Model.ServiceStorage
 {
     public class WebService : Service
     {
 
-        public string checkUrl { get; set; }
+        public string CheckUrl { get; set; }
         private HttpClient _client;
 
         public WebService() { }
 
-        public WebService(string url, string checkUrl = "api/products/isalive", int timeCheck=10)
+        public WebService(int id, string url, string checkUrl = "api/products/isalive", int timeCheck=10)
         {
-            this.url = url;
-            this.checkUrl = checkUrl;
-            this.timeCheck = timeCheck;
+            Id = id;
+            Url = url;
+            CheckUrl = checkUrl;
+            TimeCheck = timeCheck;
             _client = createClient();
         }
 
@@ -32,14 +33,14 @@ namespace Model
            
             try
             {
-                HttpResponseMessage response = _client.GetAsync(this.checkUrl).Result;
+                HttpResponseMessage response = _client.GetAsync(this.CheckUrl).Result;
                 bool status = response.IsSuccessStatusCode;
-                return new WebStatus(status, url);
+                return new WebStatus(Id, status, Url);
             }
             catch (Exception e)
             {
                 Logger.Error($"Error occured in WebService.IsAlive()", e);
-                return new WebStatus(false, url);
+                return new WebStatus(Id, false, Url);
             }
         }
 
@@ -47,7 +48,7 @@ namespace Model
         {
             HttpClient client = new HttpClient();
 
-            string baseUrl = url;
+            string baseUrl = Url;
 
             try
             {

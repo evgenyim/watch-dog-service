@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Model;
+using Model.ServiceStorage;
 
-namespace Controller
+namespace Controller.Interfaces
 {
     public interface ITrackingService
     {
-        List<Tuple<int, Status>> CheckServices();
+        List<Status> CheckServices();
+        List<Service> LoadServices(bool fromDB);
+        List<IndexedDenial> LoadDenials(bool fromDB);
+        void SaveServices(bool toDB);
+        void SaveDenials(bool toDB);
     }
 }
