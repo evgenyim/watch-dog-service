@@ -15,10 +15,7 @@ namespace Model
         public string checkUrl { get; set; }
         private HttpClient _client;
 
-        public WebService()
-        {
-            _client = createClient();
-        }
+        public WebService() { }
 
         public WebService(string url, string checkUrl = "api/products/isalive", int timeCheck=10)
         {
@@ -30,6 +27,8 @@ namespace Model
 
         public override Status IsAlive()
         {
+            if (_client is null)
+                _client = createClient();
            
             try
             {

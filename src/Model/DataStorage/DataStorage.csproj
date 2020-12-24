@@ -42,8 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataProviders\DenialDataProvider.cs" />
     <Compile Include="DBHelper.cs" />
     <Compile Include="DataProviders\WebServiceDataProvider.cs" />
+    <Compile Include="Mappers\DenialDTOMapper.cs" />
     <Compile Include="Mappers\IMapper.cs" />
     <Compile Include="Mappers\WebServiceDTOMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

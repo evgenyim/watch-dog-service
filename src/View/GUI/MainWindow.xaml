@@ -3,23 +3,32 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:GUI" 
         mc:Ignorable="d"
         Closing="Window_Closing"
-        Title="MainWindow" Height="550" Width="700"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}">
-    <Grid Margin="0,0,-0.4,0">
-        <StackPanel x:Name="loadPanel" Margin="0, 20, 0, 0" VerticalAlignment="Top" Height="50" Width="100">
-            <RadioButton x:Name="loadDB" GroupName="LoadType" Content="Database" IsChecked="True" Checked="LoadDB_Checked" />
-            <RadioButton x:Name="loadFile" GroupName="LoadType" Content="File" Checked="LoadFile_Checked"/>
-        </StackPanel>
-        <Button x:Name="button1" Width="120" Height="30"  Content="Add Service" Click="Button_Click" Margin="494,35,28.6,405.4" />
-        <Button x:Name="button2"  Width="100" Height="30" Content="Check" Click="Button_Click_Check" Margin="10,10,498.4,380" />
-        <ScrollViewer CanContentScroll="True" Margin="0,100,1,0.8" Padding="2">
-            <StackPanel x:Name="panel" Height="355" >
-            </StackPanel>
-        </ScrollViewer>
-    </Grid>
-
+        Title="MainWindow" Height="600" Width="720">
+    <TabControl Margin="8"  Style="{StaticResource MaterialDesignTabControl}">
+        <TabItem Header="Services" IsSelected="True">
+            <Grid Margin="0,0,-0.4,0">
+                <StackPanel x:Name="loadPanel" Margin="0, 20, 0, 0" VerticalAlignment="Top" Height="50" Width="100">
+                    <RadioButton x:Name="loadDB" GroupName="LoadType" Content="Database" IsChecked="True" Checked="LoadDB_Checked" />
+                    <RadioButton x:Name="loadFile" GroupName="LoadType" Content="File" Checked="LoadFile_Checked"/>
+                </StackPanel>
+                <Button x:Name="button1" Width="120" Height="30"  Content="Add Service" Click="Button_Click" Margin="496,20,62,406.8" />
+                <Button x:Name="button2"  Width="100" Height="30" Content="Check" Click="Button_Click_Check" Margin="48,20,530,406.8" />
+                <ScrollViewer CanContentScroll="True" Margin="0,100,1,0.8" Padding="2">
+                    <StackPanel x:Name="panel" Height="355" >
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Denials">
+            <Grid Margin="0,0,-0.4,0">
+                <ScrollViewer CanContentScroll="True" Margin="0,5,1,1" Padding="2">
+                    <StackPanel x:Name="denialsPanel"/>
+                </ScrollViewer>
+            </Grid>
+        </TabItem>
+    </TabControl>
 </Window>

@@ -12,6 +12,17 @@ namespace Model
         public Dictionary<int, Service> storage = new Dictionary<int, Service>();
         private int lastId = 0;
 
+        public List<Tuple<int, Status>> CheckServices()
+        {
+            List<Tuple<int, Status>> ret = new List<Tuple<int, Status>>();
+            foreach (var s in storage)
+            {
+                Status res = s.Value.IsAlive();
+                ret.Add(new Tuple<int, Status>(s.Key, res));
+            }
+            return ret;
+        }
+
         public int AddService(Service s)
         {
             storage[lastId++] = s;

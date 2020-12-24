@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Denial.cs" />
     <Compile Include="Interfaces\IServiceStorage.cs" />
     <Compile Include="Other\Logger.cs" />
     <Compile Include="Status.cs" />

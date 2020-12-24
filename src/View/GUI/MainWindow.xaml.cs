@@ -48,10 +48,17 @@ namespace GUI
             }
 
             List<Tuple<int, Service>> list;
+            List<Tuple<int, Denial, string>> denials;
             if (loadFromDb)
+            {
                 list = t.LoadServicesDB();
+                denials = t.LoadDenialsDB();
+            }
             else
+            {
                 list = t.LoadServicesFile();
+                denials = t.LoadDenialsFile();
+            }
             foreach (var item in list)
             {
                 if (item.Item2 is WebService service)
@@ -60,7 +67,14 @@ namespace GUI
                     panel.Children.Add(s);
                 }
             }
-
+            foreach (var item in denials)
+            {
+                int i = item.Item1;
+                Denial d = item.Item2;
+                string name = item.Item3;
+                DenialGrid dg = new DenialGrid(i, d.serviceId, name, d.startWorking, d.time);
+                denialsPanel.Children.Add(dg);
+            }
             thread = new Thread(Run);
             thread.Start();
         }
@@ -71,6 +85,7 @@ namespace GUI
             {
                 Thread.Sleep(1000);
                 dict = t.statuses;
+                var den = t.GetDenials();
                 Dispatcher.Invoke(() =>
                 {
                     foreach (ServiceGrid g in panel.Children)
@@ -79,6 +94,14 @@ namespace GUI
                         {
                             g.setStatus(dict[g.id]);
                         }
+                    }
+                    foreach (var item in den)
+                    {
+                        int i = item.Item1;
+                        Denial d = item.Item2;
+                        string name = item.Item3;
+                        DenialGrid dg = new DenialGrid(i, d.serviceId, name, d.startWorking, d.time);
+                        denialsPanel.Children.Add(dg);
                     }
                 });
                
@@ -150,119 +173,39 @@ namespace GUI
         {
             dict.Remove(id);
             t.DeleteService(id);
+            List<DenialGrid> toDelete = new List<DenialGrid>();
+            foreach (DenialGrid item in denialsPanel.Children)
+            {
+                if (item.serviceId == id)
+                {
+                    toDelete.Add(item);
+                }
+            }
+            foreach (var item in toDelete)
+                denialsPanel.Children.Remove(item);
+        }
+
+        public void DeleteDenial(int id)
+        {
+            t.DeleteDenial(id);
         }
 
         void Window_Closing(object sender, CancelEventArgs e)
         {
             thread.Abort();
             if (loadFromDb)
+            {
                 t.SaveServicesDB();
+                t.SaveDenialsDB();
+            }
             else
+            {
                 t.SaveServicesFile();
+                t.SaveDenialsFile();
+            }
 
             Properties.Settings.Default.loadFromDB = loadFromDb;
             Properties.Settings.Default.Save();
-        }
-    }
-
-    public class ServiceGrid : Grid
-    {
-        private Rectangle r;
-        private TextBlock name_;
-        private bool isAlive;
-        private Button deleteBtn;
-        private Button settingsBtn;
-        public string name;
-        private string url;
-        private string type;
-        public int id;
-        private string checkUrl;
-        private int checkTime;
-        public ServiceGrid(int id, string type, string url, string checkUrl, int checkTime, bool isAlive)
-        {
-            r = new Rectangle
-            {
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Width = 15
-            };
-            setStatus(isAlive);
-            name_ = new TextBlock
-            {
-                Text = url,
-                FontSize = 15,
-                Margin = new Thickness(20, 0, 0, 0)
-            };
-            name = url;
-            this.url = url;
-            this.type = type;
-            deleteBtn = new Button
-            {
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Width = 50,
-                Content = new MaterialDesignThemes.Wpf.PackIcon { Kind = MaterialDesignThemes.Wpf.PackIconKind.Delete },
-                Margin = new Thickness(0, 0, 10, 0)
-            };
-            deleteBtn.Click += Delete_Button_Click;
-            settingsBtn = new Button
-            {
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Width = 50,
-                Content = new MaterialDesignThemes.Wpf.PackIcon { Kind = MaterialDesignThemes.Wpf.PackIconKind.Cog },
-                Margin = new Thickness(0, 0, 63, 0)
-            };
-            settingsBtn.Click += Settings_Button_Click;
-            Children.Add(r);
-            Children.Add(name_);
-            Children.Add(deleteBtn);
-            Children.Add(settingsBtn);
-            this.id = id;
-            this.checkUrl = checkUrl;
-            this.checkTime = checkTime;
-        }
-
-        public void setStatus(bool status)
-        {
-            isAlive = status;
-            if (isAlive)
-            {
-                r.Fill = new SolidColorBrush(Color.FromRgb(0, 113, 226));
-            }
-            else
-            {
-                r.Fill = new SolidColorBrush(Color.FromRgb(33, 33, 33));
-            }
-        }
-
-        public void Update(string adress, int checkTime)
-        {
-            checkUrl = adress;
-            this.checkTime = checkTime;
-        }
-
-        private void Delete_Button_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this service?", "Delete", MessageBoxButton.OKCancel);
-            switch (result)
-            {
-                case MessageBoxResult.OK:
-                    var parent = VisualTreeHelper.GetParent(this);
-                    var parentAsPanel = parent as Panel;
-                    parentAsPanel.Children.Remove(this);
-                    MainWindow parentWindow = (MainWindow)Window.GetWindow(parent);
-                    parentWindow.DeleteService(id);
-                    break;
-                case MessageBoxResult.Cancel:
-                    break;
-            }
-        }
-
-        private void Settings_Button_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsForm f = new SettingsForm(id, type, url, checkUrl, checkTime);
-            var parent = VisualTreeHelper.GetParent(this);
-            MainWindow parentWindow = (MainWindow)Window.GetWindow(parent);
-            f.Owner = parentWindow;
-            f.Show();
         }
     }
 }

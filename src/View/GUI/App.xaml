@@ -4,12 +4,14 @@
              xmlns:local="clr-namespace:GUI"
              StartupUri="MainWindow.xaml"
              ShutdownMode="OnMainWindowClose"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:controls="clr-namespace:MaterialDesignExtensions.Controls;assembly=MaterialDesignExtensions">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="LightBlue" SecondaryColor="Blue" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/TabControlTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="{x:Type Button}" x:Key="MaterialDesignPopupBoxButton">
                 <Setter Property="VerticalContentAlignment" Value="Bottom" />

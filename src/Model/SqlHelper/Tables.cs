@@ -10,5 +10,6 @@ namespace SqlHelper
     {
         public const string Services = "Services";
         public const string WebServices = "WebServices";
+        public const string Denials = "Denials";
     }
 }
