@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Text.RegularExpressions;
-
+using GUI.ViewModel;
 
 namespace GUI
 {
@@ -21,9 +21,11 @@ namespace GUI
     /// </summary>
     public partial class AddForm : Window
     {
-        public AddForm()
+        ApplicationViewModel parent;
+        public AddForm(ApplicationViewModel avm)
         {
             InitializeComponent();
+            parent = avm;
         }
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
@@ -35,18 +37,19 @@ namespace GUI
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             TextBlock selectedItem = (TextBlock)serviceList.SelectedItem;
-            if (selectedItem != null) 
+            if (selectedItem != null)
             {
                 string serviceType = selectedItem.Text;
                 string url = textBoxUrl.Text;
                 string adress = textBoxAdress.Text;
                 string checkTime = textBoxCheckTime.Text;
                 if (checkTime != "")
-                    ((MainWindow)Owner).AddService(serviceType, url, adress, Int32.Parse(checkTime));
+                    parent.AddService(serviceType, url, adress, Int32.Parse(checkTime));
                 else
-                    ((MainWindow)Owner).AddService(serviceType, url, adress);
+                    parent.AddService(serviceType, url, adress);
                 Close();
-            } else
+            }
+            else
             {
                 MessageBox.Show("Please, select service type");
             }

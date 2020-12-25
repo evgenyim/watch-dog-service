@@ -7,26 +7,138 @@
         xmlns:local="clr-namespace:GUI" 
         mc:Ignorable="d"
         Closing="Window_Closing"
-        Title="MainWindow" Height="600" Width="720">
+        Title="Watch Dog Service" Height="600" Width="720">
     <TabControl Margin="8"  Style="{StaticResource MaterialDesignTabControl}">
         <TabItem Header="Services" IsSelected="True">
             <Grid Margin="0,0,-0.4,0">
                 <StackPanel x:Name="loadPanel" Margin="0, 20, 0, 0" VerticalAlignment="Top" Height="50" Width="100">
-                    <RadioButton x:Name="loadDB" GroupName="LoadType" Content="Database" IsChecked="True" Checked="LoadDB_Checked" />
-                    <RadioButton x:Name="loadFile" GroupName="LoadType" Content="File" Checked="LoadFile_Checked"/>
+                    <RadioButton x:Name="loadDB" GroupName="LoadType" Content="Database" IsChecked="{Binding Path=FromDB}"/>
+                    <RadioButton x:Name="loadFile" GroupName="LoadType" Content="File" IsChecked="{Binding Path=FromFile}"/>
                 </StackPanel>
-                <Button x:Name="button1" Width="120" Height="30"  Content="Add Service" Click="Button_Click" Margin="496,20,62,406.8" />
-                <Button x:Name="button2"  Width="100" Height="30" Content="Check" Click="Button_Click_Check" Margin="48,20,530,406.8" />
-                <ScrollViewer CanContentScroll="True" Margin="0,100,1,0.8" Padding="2">
-                    <StackPanel x:Name="panel" Height="355" >
-                    </StackPanel>
+                <Button x:Name="button1" Width="120" Height="30"  Content="Add Service" Margin="496,20,62,406.8" Command="{Binding AddCommand}"/>
+                <Button x:Name="button2"  Width="100" Height="30" Content="Check" Margin="48,20,530,406.8" Command="{Binding CheckCommand}"/>
+                <ScrollViewer CanContentScroll="True" Margin="0,100,1,0.8" Padding="2" VerticalScrollBarVisibility="Auto" Height="355">
+                    <ItemsControl x:Name="panel" ItemsSource="{Binding Panel}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,0">
+                                    <Rectangle Width="15" HorizontalAlignment="Left" Fill="{Binding Path=Fill}"/>
+                                    <TextBlock Text="{Binding Path=Name}" FontSize="15" Margin="20,0,0,0"/>
+                                    <Button HorizontalAlignment="Right" Width="50" Margin="0, 0, 10, 0" Command="{Binding DeleteCommand}">
+                                        <materialDesign:PackIcon Kind="Delete"/>
+                                    </Button>
+                                    <materialDesign:PopupBox HorizontalAlignment="Right" Margin="0, 0, 63, 0"
+                                        StaysOpen="True">
+                                            <Grid
+                                              Width="300"
+                                              Margin="8,8,8,8">
+                                            <Grid.Resources>
+                                                <Style
+                                                    TargetType="CheckBox"
+                                                    BasedOn="{StaticResource MaterialDesignCheckBox}">
+                                                    <Setter
+                                                        Property="Margin"
+                                                        Value="8,8,10,8" />
+                                                </Style>
+                                                <Style
+                                                  TargetType="TextBox"
+                                                  BasedOn="{StaticResource MaterialDesignTextBox}">
+                                                    <Setter
+                                                        Property="materialDesign:HintAssist.IsFloating"
+                                                        Value="True" />
+                                                    <Setter
+                                                        Property="Margin"
+                                                        Value="8,8,8,8" />
+                                                </Style>
+                                            </Grid.Resources>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition
+                                                Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition
+                                                    Height="*" />
+                                                <RowDefinition
+                                                    Height="*" />
+                                                <RowDefinition
+                                                    Height="*" />
+                                                <RowDefinition
+                                                    Height="*" />
+                                                <RowDefinition
+                                                    Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                                Margin="8,8,8,16"
+                                                Text="SETTINGS" />
+                                            <TextBox
+                                                Grid.Row="1"
+                                                materialDesign:HintAssist.Hint="Service url"
+                                                Text="{Binding Name}" 
+                                                IsEnabled="False"/>
+                                            <TextBox
+                                                Grid.Row="2"
+                                                materialDesign:HintAssist.Hint="Service check url"
+                                                Text="{Binding CheckUrl, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBox
+                                                Grid.Column="0"
+                                                Grid.Row="3"
+                                                materialDesign:HintAssist.Hint="Setting 3"
+                                                Text="{Binding TimeCheck, UpdateSourceTrigger=PropertyChanged}"
+                                                PreviewTextInput="NumberValidationTextBox"/>               
+                                            <StackPanel
+                                                Grid.Row="5"
+                                                Grid.ColumnSpan="2"
+                                                Orientation="Horizontal"
+                                                HorizontalAlignment="Right">
+                                                <Button
+                                                  Content="_Save"
+                                                  Command="{Binding UpdateCommand}"/>
+                                                <Button
+                                                  Content="_Cancel"
+                                                  Command="{x:Static materialDesign:PopupBox.ClosePopupCommand}">
+                                                    <Button.Style>
+                                                        <Style
+                                                          TargetType="Button"
+                                                          BasedOn="{StaticResource MaterialDesignPopupBoxButton}">
+                                                            <Setter
+                                                                Property="Foreground"
+                                                                Value="Red" />
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </materialDesign:PopupBox>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </ScrollViewer>
             </Grid>
         </TabItem>
         <TabItem Header="Denials">
             <Grid Margin="0,0,-0.4,0">
-                <ScrollViewer CanContentScroll="True" Margin="0,5,1,1" Padding="2">
-                    <StackPanel x:Name="denialsPanel"/>
+                <ScrollViewer CanContentScroll="True" Margin="0,5,1,1" Padding="2" Height="500">
+                    <ItemsControl x:Name="denialsPanel" ItemsSource="{Binding DenialsPanel}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <materialDesign:ColorZone
+                                    Background="{Binding Fill}"
+                                    Foreground="NavajoWhite">
+                                    <Grid>
+                                        <TextBlock Text="{Binding Name}" FontSize="15" Margin="20,0,0,0"/>
+                                        <TextBlock Text="{Binding Time}" FontSize="15" Margin="300,0,0,0"/>
+                                        <Button HorizontalAlignment="Right" Width="50" Margin="0, 0, 0, 0" Command="{Binding DeleteCommand}">
+                                            <materialDesign:PackIcon Kind="Delete"/>
+                                        </Button>
+                                    </Grid>
+                                </materialDesign:ColorZone>
+                                    
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </ScrollViewer>
             </Grid>
         </TabItem>
