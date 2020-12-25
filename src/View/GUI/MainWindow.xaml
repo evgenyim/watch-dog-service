@@ -76,17 +76,20 @@
                                                 Grid.Row="1"
                                                 materialDesign:HintAssist.Hint="Service url"
                                                 Text="{Binding Name}" 
-                                                IsEnabled="False"/>
+                                                IsEnabled="False"
+                                                FontSize="18"/>
                                             <TextBox
                                                 Grid.Row="2"
                                                 materialDesign:HintAssist.Hint="Service check url"
-                                                Text="{Binding CheckUrl, UpdateSourceTrigger=PropertyChanged}" />
+                                                Text="{Binding CheckUrl, UpdateSourceTrigger=PropertyChanged}"
+                                                FontSize="18"/>
                                             <TextBox
                                                 Grid.Column="0"
                                                 Grid.Row="3"
-                                                materialDesign:HintAssist.Hint="Setting 3"
+                                                materialDesign:HintAssist.Hint="Check interval"
                                                 Text="{Binding TimeCheck, UpdateSourceTrigger=PropertyChanged}"
-                                                PreviewTextInput="NumberValidationTextBox"/>               
+                                                PreviewTextInput="NumberValidationTextBox"
+                                                FontSize="18"/>               
                                             <StackPanel
                                                 Grid.Row="5"
                                                 Grid.ColumnSpan="2"
@@ -94,10 +97,12 @@
                                                 HorizontalAlignment="Right">
                                                 <Button
                                                   Content="_Save"
-                                                  Command="{Binding UpdateCommand}"/>
+                                                  Command="{Binding UpdateCommand}"
+                                                  FontSize="14"/>
                                                 <Button
                                                   Content="_Cancel"
-                                                  Command="{x:Static materialDesign:PopupBox.ClosePopupCommand}">
+                                                  Command="{x:Static materialDesign:PopupBox.ClosePopupCommand}"
+                                                  FontSize="14">
                                                     <Button.Style>
                                                         <Style
                                                           TargetType="Button"

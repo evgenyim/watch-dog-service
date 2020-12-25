@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 using Model.Other;
 using System.Collections.Concurrent;
 using Controller.Interfaces;
-using ModelDataStorage.DataProviders;
 
 namespace Controller.TrackingService
 {
@@ -43,7 +42,8 @@ namespace Controller.TrackingService
 
 		public void AddService(Service s)
 		{
-			storage.AddService(s);
+			int i = storage.AddService(s);
+			AddTimer(i, s.TimeCheck);
 		}
 
 		public int AddService(string type, string url, string checkUrl = "api/products/isalive", int timeCheck = 10)
@@ -258,7 +258,7 @@ namespace Controller.TrackingService
 					TypeNameHandling = TypeNameHandling.All
 				};
 				string s = JsonConvert.SerializeObject(Denials, settings);
-				File.WriteAllText(Properties.Settings.Default.ServicesFileName, s);
+				File.WriteAllText(Properties.Settings.Default.DenialsFileName, s);
 			}
         }
 	}

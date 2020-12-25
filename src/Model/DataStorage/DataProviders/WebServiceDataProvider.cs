@@ -6,9 +6,8 @@ using Model.DataStorage.Mappers;
 using Model.DTO;
 using Model.SqlHelper;
 using Model.ServiceStorage;
-using Model.DataStorage;
 
-namespace ModelDataStorage.DataProviders
+namespace Model.DataStorage.DataProviders
 {
     public class WebServiceDataProvider
     {

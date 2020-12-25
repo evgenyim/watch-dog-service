@@ -32,7 +32,7 @@ namespace Model.DataStorage.DataProviders
 
         public static IList<DenialDTO> DeleteByServiceId(int ServiceId)
         {
-            string sqlQuery = XmlStrings.GetString(Tables.Denials, "DeleteById");
+            string sqlQuery = XmlStrings.GetString(Tables.Denials, "DeleteByServiceId");
             SqlParameter paramId = new SqlParameter("@ServiceId", ServiceId);
 
             var result = DBHelper.GetData(

@@ -26,8 +26,8 @@ namespace Model.ServiceStorage
 
         public int AddService(Service s)
         {
-            Storage[lastId++] = s;
-            return lastId - 1;
+            Storage[s.Id] = s;
+            return s.Id;
         }
 
         public int AddService(string url)
