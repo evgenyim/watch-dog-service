@@ -187,16 +187,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DAL\DataStorage\DataStorage.csproj">
-      <Project>{78d3334a-e1de-4c1e-aec1-1af3f07dd63d}</Project>
-      <Name>DataStorage</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DAL\DTOs\DTO.csproj">
-      <Project>{91e2022a-0ba5-4ae7-906b-8fb6692f6885}</Project>
-      <Name>DTO</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

@@ -1,4 +1,4 @@
-﻿using Controller;
+﻿using Controller.TrackingService;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Model;
+using Model.ServiceStorage;
 
 namespace ConsoleApp
 {
@@ -23,10 +24,10 @@ namespace ConsoleApp
             string[] commands = command.Split();
             if (commands[0] == "check")
             {
-                List<Tuple<int, Status>> ret = t.CheckServices();
+                List<Status> ret = t.CheckServices();
                 foreach(var res in ret)
                 {
-                    Console.WriteLine(res.Item2.toString());
+                    Console.WriteLine(res.toString());
                 }
                 return true;
             } 
