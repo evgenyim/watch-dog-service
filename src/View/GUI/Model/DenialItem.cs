@@ -54,7 +54,6 @@ namespace GUI.Model
 
         #region Commands
 
-        // команда добавления нового объекта
         private RelayCommand deleteCommand;
         public RelayCommand DeleteCommand
         {

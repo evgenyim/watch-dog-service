@@ -16,9 +16,9 @@ namespace Model.ServiceStorage
         public List<Status> CheckServices()
         {
             List<Status> ret = new List<Status>();
-            foreach (var s in Storage)
+            foreach (var service in Storage)
             {
-                Status res = s.Value.IsAlive();
+                Status res = service.Value.IsAlive();
                 ret.Add(res);
             }
             return ret;
@@ -32,48 +32,40 @@ namespace Model.ServiceStorage
 
         public int AddService(string url)
         {
-            WebService s = new WebService(lastId, url);
-            Storage[lastId++] = s;
+            WebService service = new WebService(lastId, url);
+            Storage[lastId++] = service;
             return lastId - 1;
         }
 
-        public int AddService(string url, string checkUrl="api/products/isalive", int timeCheck=10)
+        public int AddService(string url, string checkUrl, int timeCheck=10)
         {
-            if (checkUrl == "")
-            {
-                checkUrl = "api/products/isalive";
-            }
-            WebService s = new WebService(lastId, url, checkUrl, timeCheck);
-            Storage[lastId++] = s;
+            WebService service = new WebService(lastId, url, checkUrl, timeCheck);
+            Storage[lastId++] = service;
             return lastId - 1;
         }
 
-        public WebService AddServiceId(int Id, string url, string checkUrl = "api/products/isalive", int timeCheck = 10)
+        public WebService AddServiceId(int Id, string url, string checkUrl, int timeCheck = 10)
         {
-            if (checkUrl == "")
-            {
-                checkUrl = "api/products/isalive";
-            }
-            WebService s = new WebService(Id, url, checkUrl, timeCheck);
+            WebService service = new WebService(Id, url, checkUrl, timeCheck);
             try
             {
-                Storage[Id] = s;
+                Storage[Id] = service;
                 lastId = Math.Max(lastId, Id) + 1;
             }
             catch (Exception e)
             {
                 Logger.Error("Error occured while adding WebService by Id", e);
-                Storage[lastId++] = s;
+                Storage[lastId++] = service;
             }
-            return s;
+            return service;
         }
 
         public void UpdateService(int Id, int timeCheck)
         {
             try
             {
-                Service s = Storage[Id];
-                s.TimeCheck = timeCheck;
+                Service service = Storage[Id];
+                service.TimeCheck = timeCheck;
             }
             catch (Exception e)
             {
@@ -85,9 +77,9 @@ namespace Model.ServiceStorage
         {
             try
             {
-                WebService s = (WebService)Storage[Id];
-                s.CheckUrl = checkUrl;
-                s.TimeCheck = timeCheck;
+                WebService service = (WebService)Storage[Id];
+                service.CheckUrl = checkUrl;
+                service.TimeCheck = timeCheck;
             }
             catch (Exception e)
             {

@@ -13,10 +13,10 @@ namespace Model.ServiceStorage
         public Denial Denial;
         public string Url;
 
-        public IndexedDenial(int id, Denial s, string url)
+        public IndexedDenial(int id, Denial d, string url)
         {
             Id = id;
-            Denial = s;
+            Denial = d;
             Url = url;
         }
     }

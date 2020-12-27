@@ -50,7 +50,7 @@ namespace Controller.TrackingService
 			AddTimer(i, s.TimeCheck);
 		}
 
-		public int AddService(string type, string url, string checkUrl = "api/products/isalive", int timeCheck = 10)
+		public int AddService(string type, string url, string checkUrl, int timeCheck = 10)
 		{
 			int i = -1;
 			if (type == "WebService")
@@ -67,7 +67,7 @@ namespace Controller.TrackingService
 			return i;
 		}
 
-		public void UpdateService(int Id, string type, string checkUrl = "api/products/isalive", int timeCheck = 10)
+		public void UpdateService(int Id, string type, string checkUrl, int timeCheck = 10)
 		{
 			if (type == "WebService")
 			{

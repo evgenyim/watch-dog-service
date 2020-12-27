@@ -11,9 +11,10 @@
     <TabControl Margin="8"  Style="{StaticResource MaterialDesignTabControl}">
         <TabItem Header="Services" IsSelected="True">
             <Grid Margin="0,0,-0.4,0">
-                <StackPanel x:Name="loadPanel" Margin="0, 20, 0, 0" VerticalAlignment="Top" Height="50" Width="100">
-                    <RadioButton x:Name="loadDB" GroupName="LoadType" Content="Database" IsChecked="{Binding Path=FromDB}"/>
-                    <RadioButton x:Name="loadFile" GroupName="LoadType" Content="File" IsChecked="{Binding Path=FromFile}"/>
+                <StackPanel x:Name="loadPanel" Margin="0, 20, 0, 0" VerticalAlignment="Top" Height="80" Width="100">
+                    <TextBlock Style="{StaticResource MaterialDesignTextBlock}" FontSize="15">Storage type</TextBlock>
+                    <RadioButton x:Name="loadDB" GroupName="LoadType" FontSize="14" Content="Database" IsChecked="{Binding Path=FromDB}"/>
+                    <RadioButton x:Name="loadFile" GroupName="LoadType" FontSize="14" Content="File" IsChecked="{Binding Path=FromFile}"/>
                 </StackPanel>
                 <Button x:Name="button1" Width="120" Height="30"  Content="Add Service" Margin="496,20,62,406.8" Command="{Binding AddCommand}"/>
                 <Button x:Name="button2"  Width="100" Height="30" Content="Check" Margin="48,20,530,406.8" Command="{Binding CheckCommand}"/>

@@ -1,6 +1,7 @@
 ﻿using Controller.TrackingService;
 using GUI.Model;
 using GUI.ViewModel.Commands;
+using Model.Other;
 using Model.ServiceStorage;
 using System;
 using System.Collections.Concurrent;
@@ -19,7 +20,7 @@ namespace GUI.ViewModel
 {
 	public class ApplicationViewModel : INotifyPropertyChanged
 	{
-		private ConcurrentDictionary<int, bool> dict = new ConcurrentDictionary<int, bool>();
+		private ConcurrentDictionary<int, bool> services = new ConcurrentDictionary<int, bool>();
 
 		private TrackingService trackingService = new TrackingService();
 		private Thread thread;
@@ -59,7 +60,7 @@ namespace GUI.ViewModel
                                List<Status> l = trackingService.CheckServices();
                                foreach (var s in l)
                                {
-                                   dict[s.ServiceId] = s.IsAlive;
+                                   services[s.ServiceId] = s.IsAlive;
                                }
                                SetStatuses();
                                MessageBox.Show("Services checked!");
@@ -89,7 +90,7 @@ namespace GUI.ViewModel
         }
         public ApplicationViewModel(Window window)
 		{
-            this.Window = window;
+            Window = window;
             loadFromDb = Properties.Settings.Default.loadFromDB;
 
             ServiceItem.parent = this;
@@ -115,20 +116,20 @@ namespace GUI.ViewModel
                     Panel.Add(item);
                 }
             }
-            foreach (var item in denials)
+            foreach (var indexedDenial in denials)
             {
-                int i = item.Id;
-                Denial d = item.Denial;
-                string name = item.Url;
-                DenialItem di = new DenialItem
+                int i = indexedDenial.Id;
+                Denial denial = indexedDenial.Denial;
+                string name = indexedDenial.Url;
+                DenialItem denialItem = new DenialItem
                 {
                     Id = i,
-                    ServiceId = d.ServiceId,
+                    ServiceId = denial.ServiceId,
                     Name = name,
-                    StartWorking = d.StartWorking,
-                    Time = d.Time.ToString()
+                    StartWorking = denial.StartWorking,
+                    Time = denial.Time.ToString()
                 };
-                DenialsPanel.Add(di);
+                DenialsPanel.Add(denialItem);
             }
             thread = new Thread(Run);
             thread.Start();
@@ -139,17 +140,17 @@ namespace GUI.ViewModel
             while (true)
             {
                 Thread.Sleep(1000);
-                dict = trackingService.Statuses;
-                var den = trackingService.GetDenials();
+                services = trackingService.Statuses;
+                var denials = trackingService.GetDenials();
                 SetStatuses();
-                SetDenials(den);
+                SetDenials(denials);
             }
         }
 
         public void AddService(string type, string url, string checkUrl, int timeCheck = 10)
         {
             int id = trackingService.AddService(type, url, checkUrl, timeCheck);
-            ServiceItem s = new ServiceItem
+            ServiceItem item = new ServiceItem
             {
                 Id = id,
                 Type = type,
@@ -158,7 +159,7 @@ namespace GUI.ViewModel
                 TimeCheck = timeCheck,
                 IsAlive = false
             };
-            Panel.Add(s);
+            Panel.Add(item);
         }
 
         public void UpdateService(int Id, string type, string adress, int checkTime = 10)
@@ -168,7 +169,7 @@ namespace GUI.ViewModel
 
         public void DeleteService(int id)
         {
-            dict.TryRemove(id, out bool _);
+            services.TryRemove(id, out bool _);
             trackingService.DeleteService(id);
             List<DenialItem> toDelete = new List<DenialItem>();
             foreach (var item in DenialsPanel)
@@ -191,11 +192,11 @@ namespace GUI.ViewModel
         {
             Window.Dispatcher.Invoke(() =>
             {
-                foreach (ServiceItem g in Panel)
+                foreach (ServiceItem serviceItem in Panel)
                 {
-                    if (dict.ContainsKey(g.Id))
+                    if (services.ContainsKey(serviceItem.Id))
                     {
-                        g.IsAlive = dict[g.Id];
+                        serviceItem.IsAlive = services[serviceItem.Id];
                     }
                 }
             });
@@ -205,30 +206,37 @@ namespace GUI.ViewModel
         {
             Window.Dispatcher.Invoke(() =>
             {
-                foreach (var item in denials)
+                foreach (var indexedDenial in denials)
                 {
-                    int i = item.Id;
-                    Denial d = item.Denial;
-                    string name = item.Url;
-                    DenialItem di = new DenialItem
+                    int i = indexedDenial.Id;
+                    Denial denial = indexedDenial.Denial;
+                    string name = indexedDenial.Url;
+                    DenialItem denialItem = new DenialItem
                     {
                         Id = i,
-                        ServiceId = d.ServiceId,
+                        ServiceId = denial.ServiceId,
                         Name = name,
-                        StartWorking = d.StartWorking,
-                        Time = d.Time.ToString()
+                        StartWorking = denial.StartWorking,
+                        Time = denial.Time.ToString()
                     };
-                    DenialsPanel.Add(di);
+                    DenialsPanel.Add(denialItem);
                 }
             });
         }
 
         public void Close()
         {
-            thread.Abort();
-            trackingService.Save(loadFromDb);
-            Properties.Settings.Default.loadFromDB = loadFromDb;
-            Properties.Settings.Default.Save();
+            try
+            {
+                thread.Abort();
+                trackingService.Save(loadFromDb);
+                Properties.Settings.Default.loadFromDB = loadFromDb;
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error occured while closing app", e);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
