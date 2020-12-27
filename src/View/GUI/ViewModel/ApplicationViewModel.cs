@@ -226,8 +226,7 @@ namespace GUI.ViewModel
         public void Close()
         {
             thread.Abort();
-            trackingService.SaveServices(loadFromDb);
-            trackingService.SaveDenials(loadFromDb);
+            trackingService.Save(loadFromDb);
             Properties.Settings.Default.loadFromDB = loadFromDb;
             Properties.Settings.Default.Save();
         }

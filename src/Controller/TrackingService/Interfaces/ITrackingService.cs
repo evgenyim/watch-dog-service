@@ -12,7 +12,6 @@ namespace Controller.Interfaces
         List<Status> CheckServices();
         List<Service> LoadServices(bool fromDB);
         List<IndexedDenial> LoadDenials(bool fromDB);
-        void SaveServices(bool toDB);
-        void SaveDenials(bool toDB);
+        void Save(bool toDB);
     }
 }

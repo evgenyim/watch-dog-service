@@ -33,8 +33,11 @@
 		</Command>
 		<Command Name="InsertDenial">
 			begin tran
-				insert into Denials
-				values (@Id, @ServiceId, @StartWorking, @Time)
+				if not exists (select * from Denials where Id = @Id)
+				begin 
+					insert into Denials
+					values (@Id, @ServiceId, @StartWorking, @Time)
+				end
 			commit tran
 		</Command>
 	</Table>
